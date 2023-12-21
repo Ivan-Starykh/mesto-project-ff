@@ -27,10 +27,10 @@
           ></div>
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
-            <button class="profile__edit-button" type="button"></button>
+            <button aria-label="edit profile" class="profile__edit-button" type="button"></button>
             <p class="profile__description">Исследователь океана</p>
           </div>
-          <button class="profile__add-button" type="button"></button>
+          <button aria-label="add card" class="profile__add-button" type="button"></button>
         </section>
         <section class="places page__section">
           <ul class="places__list"></ul>
@@ -41,7 +41,7 @@
       </footer>
       <div class="popup popup_type_edit">
         <div class="popup__content">
-          <button type="button" class="popup__close"></button>
+          <button aria-label="close popup" type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
           <form class="popup__form" name="edit-profile">
             <input
@@ -58,7 +58,7 @@
               placeholder="Занятие"
               required
             />
-            <button type="submit" class="button popup__button">
+            <button aria-label="save popup" type="submit" class="button popup__button">
               Сохранить
             </button>
           </form>
@@ -66,7 +66,7 @@
       </div>
       <div class="popup popup_type_new-card">
         <div class="popup__content">
-          <button type="button" class="popup__close"></button>
+          <button aria-label="close popup" type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
           <form class="popup__form" name="new-place">
             <input
@@ -83,7 +83,7 @@
               placeholder="Ссылка на картинку"
               required
             />
-            <button type="submit" class="button popup__button">
+            <button aria-label="save popup" type="submit" class="button popup__button">
               Сохранить
             </button>
           </form>
@@ -91,22 +91,22 @@
       </div>
       <div class="popup popup_type_image">
         <div class="popup__content popup__content_content_image">
-          <button type="button" class="popup__close"></button>
+          <button aria-label="close popup" type="button" class="popup__close"></button>
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>
       </div>
     </div>
-    <script src="./scripts/cards.js"></script>
+    <script src="./scripts/cards.js" defer></script>
     <script src="./scripts/index.js" defer></script>
 
     <template id="card-template">
       <li class="places__item card">
         <img class="card__image" src="" alt="" />
-        <button type="button" class="card__delete-button"></button>
+        <button aria-label="delete card" type="button" class="card__delete-button"></button>
         <div class="card__description">
           <h2 class="card__title"></h2>
-          <button type="button" class="card__like-button"></button>
+          <button aria-label="like card" type="button" class="card__like-button"></button>
         </div>
       </li>
     </template>
