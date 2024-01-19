@@ -11,7 +11,12 @@
 import "../src/pages/index.css";
 import { initialCards } from "./components/cards.js";
 import { createCard, сardDelete } from "./components/card.js";
-import { openModal, closeModal, handleModalOverlayClick, handleModalEscPress } from "./components/modal.js";
+import {
+  openModal,
+  closeModal,
+  handleModalOverlayClick,
+  handleModalEscPress,
+} from "./components/modal.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   const cardContainer = document.querySelector(".places__list");
@@ -31,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let initialAbout;
 
   editProfileButton.addEventListener("click", function () {
-
     // Получаем значения из элементов профиля
     const currentName = userName.textContent;
     const currentAbout = userAbout.textContent;
@@ -116,11 +120,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Добавляем обработчики событий для кнопок открытия модальных окон
-	function addEventListeners() {
-		// Обработчики событий для кнопок открытия модальных окон
-		editButton.addEventListener("click", () => openModal(editModal));
-		addButton.addEventListener("click", () => openModal(addModal));
-	}
+  function addEventListeners() {
+    // Обработчики событий для кнопок открытия модальных окон
+    editButton.addEventListener("click", () => openModal(editModal));
+    addButton.addEventListener("click", () => openModal(addModal));
+  }
 
   function openModal(modal) {
     modal.classList.add("popup_is-opened");
