@@ -10,12 +10,11 @@
 
 import "../src/pages/index.css";
 import { initialCards } from "./components/cards.js";
-// import {...} from './components/card.js';
-// import {...} from './components/modal.js';
+import { createCard, сardDelete } from "./components/card.js";
+import { openModal, closeModal, handleModalOverlayClick, handleModalEscPress } from "./components/modal.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   const cardContainer = document.querySelector(".places__list");
-  const cardTemplate = document.querySelector("#card-template").content;
 
   // Редактируем профиль
   const editPopup = document.querySelector(".popup_type_edit");
@@ -32,12 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
   let initialAbout;
 
   editProfileButton.addEventListener("click", function () {
+
     // Получаем значения из элементов профиля
     const currentName = userName.textContent;
     const currentAbout = userAbout.textContent;
 
     initialName = userName.textContent;
     initialAbout = userAbout.textContent;
+
     // Заполняем поля модальной формы
     nameInput.value = currentName;
     aboutInput.value = currentAbout;
@@ -57,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function closeEditPopup() {
     nameInput.value = initialName;
     aboutInput.value = initialAbout;
+
     // Добавляем класс для анимации закрытия
     editPopup.classList.add("popup_is-animated");
 
@@ -68,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Обработчик события submit формы
-  editForm.addEventListener("submit", function (evt) {
+  editForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
     updateUserInfo();
     if (evt.target === evt.currentTarget) {
@@ -101,37 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function createCard(card, deleteCardCallback, openImagePopupCallback) {
-    const cardElement = cardTemplate
-      .querySelector(".places__item")
-      .cloneNode(true);
-    cardElement.querySelector(".card__title").textContent = card.name;
-    cardElement.querySelector(".card__image").src = card.link;
-    const cardImage = cardElement.querySelector(".card__image");
-    cardImage.src = card.link;
-    cardImage.setAttribute("alt", card.name);
-    const deleteButton = cardElement.querySelector(".card__delete-button");
-    deleteButton.addEventListener("click", () =>
-      deleteCardCallback(cardElement)
-    );
-    // Добавляем обработчик события для кнопки лайка
-    const likeButton = cardElement.querySelector(".card__like-button");
-    likeButton.addEventListener("click", function () {
-      this.classList.toggle("card__like-button_is-active");
-    });
-
-    // Добавляем обработчик события для открытия попапа с изображением
-    cardImage.addEventListener("click", () =>
-      openImagePopupCallback(card.link, card.name)
-    );
-
-    return cardElement;
-  }
-
-  function сardDelete(card) {
-    card.remove();
-  }
-
   function openImagePopup(imageUrl, imageName) {
     const imagePopup = document.querySelector(".popup_type_image");
     const image = imagePopup.querySelector(".popup__image");
@@ -144,44 +115,12 @@ document.addEventListener("DOMContentLoaded", function () {
     openModal(imagePopup);
   }
 
-  // Функция для закрытия модального окна
-  function closeModal(modal) {
-    modal.classList.remove("popup_is-opened");
-    // modal.classList.toggle('popup_is-animated');
-
-    // Удаляем обработчик событий для закрытия модального окна при клике на оверлей
-    modal.removeEventListener("click", handleModalOverlayClick);
-
-    // Удаляем обработчик событий для закрытия модального окна при нажатии на клавишу Esc
-    document.removeEventListener("keydown", handleModalEscPress);
-  }
-
-  // Функция-обработчик для закрытия модального окна при клике на оверлей
-  function handleModalOverlayClick(event) {
-    if (event.target === event.currentTarget) {
-      const modal = event.target.closest(".popup");
-      closeModal(modal);
-    }
-  }
-
-  // Функция-обработчик для закрытия модального окна при нажатии на клавишу Esc
-  function handleModalEscPress(event) {
-    if (event.key === "Escape") {
-      const openModal = document.querySelector(".popup_is-opened");
-      if (openModal) {
-        closeModal(openModal);
-      }
-    }
-  }
-
   // Добавляем обработчики событий для кнопок открытия модальных окон
-  editButton.addEventListener("click", function () {
-    openModal(editModal);
-  });
-
-  addButton.addEventListener("click", function () {
-    openModal(addModal);
-  });
+	function addEventListeners() {
+		// Обработчики событий для кнопок открытия модальных окон
+		editButton.addEventListener("click", () => openModal(editModal));
+		addButton.addEventListener("click", () => openModal(addModal));
+	}
 
   function openModal(modal) {
     modal.classList.add("popup_is-opened");
@@ -189,9 +128,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("keydown", handleModalEscPress);
   }
 
-  // Добавляем обработчики событий для кнопок закрытия модальных окон
-  closeButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
+  // Обработчики событий для кнопок закрытия модальных окон
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
       const modal = button.closest(".popup");
       modal.classList.add("popup_is-animated");
       closeModal(modal);
@@ -220,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
       link: linkInput.value,
     };
 
-    const newCard = createCard(newCardData, сardDelete);
+    const newCard = createCard(newCardData, сardDelete, openImagePopup);
 
     // Добавляем новую карточку в начало контейнера
     cardContainer.prepend(newCard);
