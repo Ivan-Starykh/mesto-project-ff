@@ -7,15 +7,26 @@
 // Функция для открытия модального окна
 
 export function openModal(modal) {
-  modal.classList.add("popup_is-opened");
-  // modal.addEventListener("click", handleModalOverlayClick);
+  modal.classList.add("popup_is-opened", "popup_is-animated");
   document.addEventListener("keydown", handleModalEscPress);
 }
 
 export function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
-  // modal.removeEventListener("click", handleModalOverlayClick);
-  document.removeEventListener("keydown", handleModalEscPress);
+	document.removeEventListener("keydown", handleModalEscPress);
+  window.addEventListener("keydown", function (evt) {
+    if (evt.key === "Escape") {
+      closeModal(modal); 
+    }
+  });
+
+// export function closeModal(modal) {
+//   modal.classList.remove("popup_is-opened");
+// 	document.removeEventListener("keydown", handleModalEscPress);
+//   modal.addEventListener("transitionend", function handleTransitionEnd() {
+//     modal.classList.remove("popup_is-animated");
+//     modal.removeEventListener("transitionend", handleTransitionEnd);
+//   });
 }
 
 export function handleModalOverlayClick(event) {

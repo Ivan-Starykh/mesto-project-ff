@@ -8,19 +8,22 @@
 // карточки. Также в index.js находится код, который
 // отвечает за отображение шести карточек при открытии страницы.
 
-import "../src/pages/index.css";
-import { initialCards } from "./components/cards.js";
-import { createCard, сardDelete, handleCardLikeCallback} from "./components/card.js";
+import "../pages/index.css";
+import { initialCards } from "./cards.js";
+import { createCard, сardDelete, handleCardLikeCallback} from "./card.js";
 import {
   openModal,
   closeModal,
   handleModalOverlayClick,
 	setModalClickListener,
   handleModalEscPress,
-} from "./components/modal.js";
+} from "./modal.js";
 
-document.addEventListener("DOMContentLoaded", function () {
   const cardContainer = document.querySelector(".places__list");
+
+	const imagePopup = document.querySelector(".popup_type_image");
+  const cardImage = imagePopup.querySelector(".popup__image");
+  const imageCaption = imagePopup.querySelector(".popup__caption");
 
   // Редактируем профиль
   const editPopup = document.querySelector(".popup_type_edit");
@@ -28,61 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const nameInput = editForm.elements.name;
   const aboutInput = editForm.elements.description;
 
-  const userCard = document.querySelector(".profile__info");
-  const userName = userCard.querySelector(".profile__title");
-  const userAbout = userCard.querySelector(".profile__description");
-  const editProfileButton = userCard.querySelector(".profile__edit-button");
-
-  let initialName;
-  let initialAbout;
-
-  editProfileButton.addEventListener("click", function () {
-    // Получаем значения из элементов профиля
-    const currentName = userName.textContent;
-    const currentAbout = userAbout.textContent;
-
-    initialName = userName.textContent;
-    initialAbout = userAbout.textContent;
-
-    // Заполняем поля модальной формы
-    nameInput.value = currentName;
-    aboutInput.value = currentAbout;
-
-    // Открываем модальное окно
-    openModal(editPopup);
-  });
-
-  // Функция для обновления информации на странице
-  function updateUserInfo() {
-    userName.textContent = nameInput.value;
-    userAbout.textContent = aboutInput.value;
-    closeEditPopup();
-  }
-
-  // Функция для закрытия модального окна редактирования
-  function closeEditPopup() {
-    nameInput.value = initialName;
-    aboutInput.value = initialAbout;
-
-    // Добавляем класс для анимации закрытия
-    editPopup.classList.add("popup_is-animated");
-
-    window.addEventListener("keydown", function (evt) {
-      if (evt.key === "Escape") {
-        closeEditPopup();
-      }
-    });
-  }
-
-  // Обработчик события submit формы
-  editForm.addEventListener("submit", (evt) => {
-    evt.preventDefault();
-    updateUserInfo();
-    if (evt.target === evt.currentTarget) {
-      const modal = evt.target.closest(".popup");
-      closeModal(modal);
-    }
-  });
+  const userProfileCard = document.querySelector(".profile__info");
+  const userName = userProfileCard.querySelector(".profile__title");
+  const userAbout = userProfileCard.querySelector(".profile__description");
+  const editProfileButton = userProfileCard.querySelector(".profile__edit-button");
 
   // Получаем элементы модальных окон
   const editModal = document.querySelector(".popup_type_edit");
@@ -94,6 +46,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Получаем элементы для закрытия модальных окон
   const closeButtons = document.querySelectorAll(".popup__close");
+
+	editProfileButton.addEventListener("click", function () {
+		// Заполняем поля модальной формы
+		nameInput.value = userName.textContent;
+		aboutInput.value = userAbout.textContent;
+	
+		// Открываем модальное окно
+		openModal(editPopup);
+	});
+
+	// Функция для обновления информации на странице
+	function updateUserInfo(modal) {
+		userName.textContent = nameInput.value;
+		userAbout.textContent = aboutInput.value;
+		closeModal(modal);
+	}
+
+  // Обработчик события submit формы
+  editForm.addEventListener("submit", (evt) => {
+    evt.preventDefault();
+    updateUserInfo(editPopup);
+    });
 
 	// Устанавливаем слушатель клика по оверлею для каждого модального окна
 setModalClickListener(editModal, handleModalOverlayClick);
@@ -114,35 +88,26 @@ function addCards(cardInfo, deleteCardCallback, openImagePopupCallback, handleCa
 }
 
 function openImagePopupCallback(imageUrl, imageName) {
-  const imagePopup = document.querySelector(".popup_type_image");
-  const image = imagePopup.querySelector(".popup__image");
-  const imageCaption = imagePopup.querySelector(".popup__caption");
 
-  image.src = imageUrl;
-  image.alt = imageName;
+  cardImage.src = imageUrl;
+  cardImage.alt = imageName;
   imageCaption.textContent = imageName;
 
   openModal(imagePopup);
 }
 
-  // Добавляем обработчики событий для кнопок открытия модальных окон
-  function addEventListeners() {
-    // Обработчики событий для кнопок открытия модальных окон
-    editButton.addEventListener("click", () => openModal(editModal));
-    addButton.addEventListener("click", () => openModal(addModal));
-  }
-
-  function openModal(modal) {
-    modal.classList.add("popup_is-opened");
-    modal.addEventListener("click", handleModalOverlayClick);
-    document.addEventListener("keydown", handleModalEscPress);
-  }
+  // // Добавляем обработчики событий для кнопок открытия модальных окон
+  // function addEventListeners() {
+  //   // Обработчики событий для кнопок открытия модальных окон
+  //   editButton.addEventListener("click", () => openModal(editModal));
+  //   addButton.addEventListener("click", () => openModal(addModal));
+  // }
 
   // Обработчики событий для кнопок закрытия модальных окон
   closeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const modal = button.closest(".popup");
-      modal.classList.add("popup_is-animated");
+      // modal.classList.add("popup_is-animated");
       closeModal(modal);
     });
   });
@@ -180,4 +145,4 @@ function openImagePopupCallback(imageUrl, imageName) {
     // Очищаем форму
     addCardForm.reset();
   });
-});
+
