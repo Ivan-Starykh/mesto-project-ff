@@ -8,14 +8,13 @@
 
 export function openModal(modal) {
   modal.classList.add("popup_is-opened");
-  modal.addEventListener("click", handleModalOverlayClick);
+  // modal.addEventListener("click", handleModalOverlayClick);
   document.addEventListener("keydown", handleModalEscPress);
 }
 
 export function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
-
-  modal.removeEventListener("click", handleModalOverlayClick);
+  // modal.removeEventListener("click", handleModalOverlayClick);
   document.removeEventListener("keydown", handleModalEscPress);
 }
 
@@ -33,4 +32,8 @@ export function handleModalEscPress(event) {
       closeModal(openModal);
     }
   }
+}
+
+export function setModalClickListener(modal, handleModalOverlayClick) {
+  modal.addEventListener("click", handleModalOverlayClick);
 }

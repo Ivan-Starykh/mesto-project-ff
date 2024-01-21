@@ -10,11 +10,12 @@
 
 import "../src/pages/index.css";
 import { initialCards } from "./components/cards.js";
-import { createCard, сardDelete } from "./components/card.js";
+import { createCard, сardDelete, handleCardLikeCallback} from "./components/card.js";
 import {
   openModal,
   closeModal,
   handleModalOverlayClick,
+	setModalClickListener,
   handleModalEscPress,
 } from "./components/modal.js";
 
@@ -94,30 +95,35 @@ document.addEventListener("DOMContentLoaded", function () {
   // Получаем элементы для закрытия модальных окон
   const closeButtons = document.querySelectorAll(".popup__close");
 
-  addCards(initialCards, сardDelete, openImagePopup);
+	// Устанавливаем слушатель клика по оверлею для каждого модального окна
+setModalClickListener(editModal, handleModalOverlayClick);
+setModalClickListener(addModal, handleModalOverlayClick);
 
-  function addCards(cardInfo, deleteCardCallback, openImagePopupCallback) {
-    for (let card of cardInfo) {
-      const cardElement = createCard(
-        card,
-        deleteCardCallback,
-        openImagePopupCallback
-      );
-      cardContainer.append(cardElement);
-    }
+addCards(initialCards, сardDelete, openImagePopupCallback, handleCardLikeCallback);
+
+function addCards(cardInfo, deleteCardCallback, openImagePopupCallback, handleCardLikeCallback) {
+  for (let card of cardInfo) {
+    const cardElement = createCard(
+			card,
+      deleteCardCallback,
+      openImagePopupCallback,
+      handleCardLikeCallback
+    );
+    cardContainer.append(cardElement);
   }
+}
 
-  function openImagePopup(imageUrl, imageName) {
-    const imagePopup = document.querySelector(".popup_type_image");
-    const image = imagePopup.querySelector(".popup__image");
-    const imageCaption = imagePopup.querySelector(".popup__caption");
+function openImagePopupCallback(imageUrl, imageName) {
+  const imagePopup = document.querySelector(".popup_type_image");
+  const image = imagePopup.querySelector(".popup__image");
+  const imageCaption = imagePopup.querySelector(".popup__caption");
 
-    image.src = imageUrl;
-    image.alt = imageName;
-    imageCaption.textContent = imageName;
+  image.src = imageUrl;
+  image.alt = imageName;
+  imageCaption.textContent = imageName;
 
-    openModal(imagePopup);
-  }
+  openModal(imagePopup);
+}
 
   // Добавляем обработчики событий для кнопок открытия модальных окон
   function addEventListeners() {
@@ -163,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
       link: linkInput.value,
     };
 
-    const newCard = createCard(newCardData, сardDelete, openImagePopup);
+    const newCard = createCard(newCardData, сardDelete, openImagePopupCallback, handleCardLikeCallback);
 
     // Добавляем новую карточку в начало контейнера
     cardContainer.prepend(newCard);
