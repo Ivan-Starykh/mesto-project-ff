@@ -7,18 +7,13 @@
 // Функция для открытия модального окна
 
 export function openModal(modal) {
-  modal.classList.add("popup_is-opened", "popup_is-animated");
+  modal.classList.add("popup_is-opened");
   document.addEventListener("keydown", handleModalEscPress);
 }
 
 export function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleModalEscPress);
-  window.addEventListener("keydown", function (evt) {
-    if (evt.key === "Escape") {
-      closeModal(modal);
-    }
-  });
 }
 
 export function handleModalOverlayClick(event) {
