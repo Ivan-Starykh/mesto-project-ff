@@ -74,7 +74,6 @@ editForm.addEventListener("submit", (evt) => {
 // Устанавливаем слушатель клика по оверлею для каждого модального окна
 setModalClickListener(editModal, handleModalOverlayClick);
 setModalClickListener(addModal, handleModalOverlayClick);
-setModalClickListener(imagePopup, handleModalOverlayClick);
 
 addCards(
   initialCards,
