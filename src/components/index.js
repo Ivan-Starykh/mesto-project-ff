@@ -20,7 +20,7 @@ import {
 } from "./modal.js";
 // Подключаем validation.js
 import {  } from './validation';
-import { getInitialCards } from './api.js'
+import { getCards, getUserInfo,updateUserInfoApi } from './api.js';
 
 const cardContainer = document.querySelector(".places__list");
 const imagePopup = document.querySelector(".popup_type_image");
@@ -89,27 +89,48 @@ setModalClickListener(editModal, handleModalOverlayClick);
 setModalClickListener(addModal, handleModalOverlayClick);
 
 addCards(
-  initialCards,
+  // initialCards,
   сardDelete,
   openImagePopupCallback,
   handleCardLikeCallback
 );
 
+// function addCards(
+//   cardInfo,
+//   deleteCardCallback,
+//   openImagePopupCallback,
+//   handleCardLikeCallback
+// ) {
+//   for (let card of cardInfo) {
+//     const cardElement = createCard(
+//       card,
+//       deleteCardCallback,
+//       openImagePopupCallback,
+//       handleCardLikeCallback
+//     );
+//     cardContainer.append(cardElement);
+//   }
+// }
 function addCards(
-  cardInfo,
   deleteCardCallback,
   openImagePopupCallback,
   handleCardLikeCallback
 ) {
-  for (let card of cardInfo) {
-    const cardElement = createCard(
-      card,
-      deleteCardCallback,
-      openImagePopupCallback,
-      handleCardLikeCallback
-    );
-    cardContainer.append(cardElement);
-  }
+  getCards()
+    .then(cards => {
+      for (let card of cards) {
+        const cardElement = createCard(
+          card,
+          deleteCardCallback,
+          openImagePopupCallback,
+          handleCardLikeCallback
+        );
+        cardContainer.append(cardElement);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching cards:', error);
+    });
 }
 
 function openImagePopupCallback(imageUrl, imageName) {
@@ -503,10 +524,94 @@ linkInput.addEventListener('input', function () {
 //   checkInputValidity(formElement, descriptionInput, descriptionError);
 // });
 
-getInitialCards()
-  .then((result) => {
-    // обрабатываем результат
+// Загрузка информации о пользователе и обновление элементов на странице
+// const loadUserInfo = () => {
+//   getUserInfo()
+//     .then(userInfo => {
+//       // Обновление элементов на странице с информацией о пользователе
+//       const userNameElement = document.querySelector('.profile__title');
+//       const userAboutElement = document.querySelector('.profile__description');
+//       const userAvatarElement = document.querySelector('.profile__image');
+
+//       userNameElement.textContent = userInfo.name;
+//       userAboutElement.textContent = userInfo.about;
+//       userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
+//     })
+//     .catch(error => {
+//       console.error('Error:', error);
+//     });
+// };
+// // Загрузка информации о пользователе при загрузке страницы
+// loadUserInfo();
+
+// Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
+const loadData = () => {
+  Promise.all([getUserInfo(), getCards()])
+    .then(([userInfo, cards]) => {
+      // Обновление элементов на странице с информацией о пользователе
+			const userNameElement = document.querySelector('.profile__title');
+      const userAboutElement = document.querySelector('.profile__description');
+      const userAvatarElement = document.querySelector('.profile__image');
+
+      userNameElement.textContent = userInfo.name;
+      userAboutElement.textContent = userInfo.about;
+      userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
+
+      // Обрабатываем полученные карточки здесь
+			addCards(
+        сardDelete,
+        openImagePopupCallback,
+        handleCardLikeCallback
+      );
+    })
+    //   console.log(cards);
+    // })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+};
+
+// Обновление данных профиля
+const handleProfileUpdate = () => {
+  const newName = prompt('Введите новое имя');
+  const newAbout = prompt('Введите новую информацию о себе');
+
+  if (newName || newAbout) {
+    updateUserInfo(newName, newAbout)
+      .then(updatedUserInfoApi => {
+        console.log('Данные профиля обновлены:', updatedUserInfoApi);
+        loadData(); // Обновляем информацию о пользователе после успешного обновления
+      })
+      .catch(error => {
+        console.error('Ошибка при обновлении данных профиля:', error);
+      });
+  }
+};
+
+// Загрузка информации о пользователе и начальных карточек при загрузке страницы
+loadData();
+
+// Добавляем событие для обновления данных профиля (например, по клику на кнопку)
+const updateProfileButton = document.querySelector('.popup__button');
+updateProfileButton.addEventListener('click', handleProfileUpdate);
+
+
+// Использование запроса на получение карточек
+getCards()
+  .then(cards => {
+    console.log(cards);
+    // Обрабатывайте полученные карточки здесь
   })
-  .catch((err) => {
-    console.log(err); // выводим ошибку в консоль
-  }); 
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+// Использование запроса на получение информации о пользователе
+getUserInfo()
+  .then(userInfo => {
+    console.log(userInfo);
+    // Обрабатывайте полученную информацию о пользователе здесь
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
