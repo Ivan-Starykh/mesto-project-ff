@@ -19,8 +19,8 @@ import {
   handleModalEscPress,
 } from "./modal.js";
 // Подключаем validation.js
-import {  } from './validation';
-import { getCards, getUserInfo,updateUserInfoApi } from './api.js';
+// import {  } from './validation';
+import { getCards, getUserInfo,updateUserInfoApi, addCard } from './api.js';
 
 const cardContainer = document.querySelector(".places__list");
 const imagePopup = document.querySelector(".popup_type_image");
@@ -71,12 +71,29 @@ hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
 hideInputError(profileForm, linkInput, linkError, validationConfig);
 });
 
-// Функция для обновления информации на странице
+
+// Функция для обновления информации на сервере и закрытия модального окна
 function updateUserInfo(modal) {
-  userName.textContent = nameInput.value;
-  userAbout.textContent = aboutInput.value;
-  closeModal(modal);
+  const newName = nameInput.value;
+  const newAbout = aboutInput.value;
+
+  // Вызываем функцию для обновления данных пользователя на сервере
+  updateUserInfoApi(newName, newAbout)
+    .then(updatedUserInfo => {
+      console.log('Данные профиля обновлены:', updatedUserInfo);
+
+      // Обновляем информацию на странице
+      userName.textContent = updatedUserInfo.name;
+      userAbout.textContent = updatedUserInfo.description;
+
+      // Закрываем модальное окно
+      closeModal(modal);
+    })
+    .catch(error => {
+      console.error('Ошибка при обновлении данных профиля:', error);
+    });
 }
+
 
 // Обработчик события submit формы
 editForm.addEventListener("submit", (evt) => {
@@ -95,22 +112,6 @@ addCards(
   handleCardLikeCallback
 );
 
-// function addCards(
-//   cardInfo,
-//   deleteCardCallback,
-//   openImagePopupCallback,
-//   handleCardLikeCallback
-// ) {
-//   for (let card of cardInfo) {
-//     const cardElement = createCard(
-//       card,
-//       deleteCardCallback,
-//       openImagePopupCallback,
-//       handleCardLikeCallback
-//     );
-//     cardContainer.append(cardElement);
-//   }
-// }
 function addCards(
   deleteCardCallback,
   openImagePopupCallback,
@@ -165,27 +166,29 @@ addCardForm.addEventListener("submit", function (evt) {
   const placeNameInput = addCardForm.elements.placeName;
   const linkInput = addCardForm.elements.link;
 
-  // Создаем новую карточку
-  const newCardData = {
-    name: placeNameInput.value,
-    link: linkInput.value,
-  };
+	  // Вызываем функцию для добавления новой карточки на сервер
+		addCard(placeNameInput.value, linkInput.value)
+    .then(newCard => {
+      // Создаем новую карточку на основе данных, полученных с сервера
+      const cardElement = createCard(
+        newCard,
+        сardDelete,
+        openImagePopupCallback,
+        handleCardLikeCallback
+      );
 
-  const newCard = createCard(
-    newCardData,
-    сardDelete,
-    openImagePopupCallback,
-    handleCardLikeCallback
-  );
+      // Добавляем новую карточку в начало контейнера
+      cardContainer.prepend(cardElement);
 
-  // Добавляем новую карточку в начало контейнера
-  cardContainer.prepend(newCard);
+      // Закрываем модальное окно
+      closeModal(addModal);
 
-  // Закрываем модальное окно
-  closeModal(addModal);
-
-  // Очищаем форму
-  addCardForm.reset();
+      // Очищаем форму
+      addCardForm.reset();
+    })
+    .catch(error => {
+      console.error('Error adding card:', error);
+    });
 });
 
 
@@ -200,8 +203,6 @@ const validationConfig = {
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__error_visible',
 };
-
-
 
 // Функция включения валидации
 function enableValidation(config) {
@@ -339,11 +340,6 @@ function clearValidation(formElement, config) {
       errorElement.classList.remove(config.errorClass); // удаление класса ошибки
     }
   });
-		// if (inputElement.name === 'link' || inputElement.name === 'placeName') {
-    //   // Очищаем сообщения об ошибке для полей "link" и "placeName"
-    //   const specificErrorElement = formElement.querySelector(`.popup__input_type_error`);
-    //   hideInputError(formElement, inputElement, specificErrorElement, config);
-    // }
 	
   formElement.reset();// Очищаем всю форму
   };
@@ -353,14 +349,15 @@ const formElement = document.querySelector(validationConfig.formSelector);
 toggleButtonState(formElement, Array.from(formElement.querySelectorAll('.popup__input')), formElement.querySelector('.popup__button'), validationConfig);
 
 const profileForm = document.querySelector('.popup__form');
+
+
   // Первоначальная очистка при открытии формы
   clearValidation(profileForm, validationConfig);
 enableValidation(validationConfig);
 // Настройка валидации и состояния кнопки
 enableValidation(validationConfig);
 toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
-// Убираем ошибки при вводе
-clearValidation(profileForm, validationConfig);
+
 // Сбрасываем значения полей и ошибок
 hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
   // Добавляем событие только после полной загрузки DOM
@@ -401,149 +398,6 @@ linkInput.addEventListener('input', function () {
 
 
 
-
-
-
-
-
-// const formElement = document.querySelector('.popup__form');
-// const nameFormInput = formElement.querySelector('.popup__input_type_name');
-// const descriptionInput = formElement.querySelector('.popup__input_type_description');
-
-// const nameError = formElement.querySelector('#name-input-error');
-// const descriptionError = formElement.querySelector('#about-input-error');
-
-// const resetValidation = (formElement) => {
-//   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-//   const errorList = Array.from(formElement.querySelectorAll('.form__input-error'));
-
-//   inputList.forEach((inputElement) => {
-//     const errorElement = formElement.querySelector(`#${inputElement.name}-error`);
-//     hideInputError(formElement, inputElement, errorElement);
-// 		if (inputElement) {
-// 		inputElement.classList.remove('popup__input_type_error');
-// 		}
-//   });
-
-// 	errorList.forEach((errorElement) => {
-// 		if (errorElement) {
-// 			errorElement.textContent = '';
-// 		}
-// 	});
-	
-//   // сброс состояния кнопки
-//   const buttonElement = formElement.querySelector('.button.popup__button');
-//   buttonElement.disabled = true;
-//   buttonElement.classList.add('button_inactive');
-// };
-
-// const showInputError = (formElement, inputElement, errorElement, errorMessage) => {
-//   inputElement.classList.add('popup__input_type_error');
-//   errorElement.textContent = errorMessage;
-//   errorElement.classList.add('popup__input-error_active');
-// };
-
-// const hideInputError = (formElement, inputElement, errorElement) => {
-//   if (errorElement) { // Проверяем, существует ли элемент ошибки
-//     inputElement.classList.remove('popup__input_type_error');
-//     errorElement.classList.remove('popup__input-error_active');
-//     errorElement.textContent = '';
-//   }
-// };
-
-
-// const isNameValid = (name) => /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(name);
-// const isDescriptionValid = (description) => /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(description);
-
-// const checkInputValidity = (formElement, inputElement, errorElement) => {
-//   if (!inputElement.validity.valid) {
-//     showInputError(formElement, inputElement, errorElement, inputElement.validationMessage);
-//   } else {
-//     hideInputError(formElement, inputElement, errorElement);
-
-//     if (inputElement.name === 'name' && !isNameValid(inputElement.value)) {
-//       showInputError(formElement, inputElement, errorElement, 'Минимальное количество символов: 2. Длинна текста сейчас: 1 символ.');
-//     } else if (inputElement.name === 'description' && !isDescriptionValid(inputElement.value)) {
-//       showInputError(formElement, inputElement, errorElement, 'Минимальное количество символов: 2. Длинна текста сейчас: 1 символ.');
-//     }
-//   }
-//   toggleButtonState(formElement, Array.from(formElement.querySelectorAll('.popup__input')), formElement.querySelector('.button.popup__button'));
-// };
-
-// const hasInvalidInput = (inputList) => {
-//   return inputList.some((inputElement) => {
-//     return !inputElement.validity.valid || (inputElement.name === 'name' && !isNameValid(inputElement.value)) || (inputElement.name === 'description' && !isDescriptionValid(inputElement.value));
-//   });
-// };
-
-// const toggleButtonState = (formElement, inputList, buttonElement, isFormOpen) => {
-//   if (isFormOpen) {
-//     // Если форма открыта, применить стили .popup__button
-//     buttonElement.classList.remove('button_inactive');
-//     buttonElement.disabled = false;
-//   } else {
-//     // Если форма закрыта, применить стили .button_inactive
-//     buttonElement.classList.add('button_inactive');
-//     buttonElement.disabled = true;
-//   }
-
-//   if (hasInvalidInput(inputList)) {
-//     buttonElement.disabled = true;
-//     buttonElement.classList.add('button_inactive');
-//   } else {
-//     buttonElement.disabled = false;
-//     buttonElement.classList.remove('button_inactive');
-//   }
-// };
-
-//   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-//   const buttonElement = formElement.querySelector('.button.popup__button');
-// const setEventListeners = (formElement) => {
-
-//   // const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-//   // const buttonElement = formElement.querySelector('.button.popup__button');
-//   inputList.forEach((inputElement) => {
-//     const errorElement = formElement.querySelector(`#${inputElement.name}-error`);
-//     inputElement.addEventListener('input', function () {
-//       checkInputValidity(formElement, inputElement, errorElement);
-//       toggleButtonState(formElement, inputList, buttonElement);
-//     });
-//   });
-// };
-
-
-// formElement.addEventListener('submit', function (evt) {
-//   evt.preventDefault();
-// });
-
-// nameFormInput.addEventListener('input', function () {
-//   checkInputValidity(formElement, nameFormInput, nameError);
-// });
-
-// descriptionInput.addEventListener('input', function () {
-//   checkInputValidity(formElement, descriptionInput, descriptionError);
-// });
-
-// Загрузка информации о пользователе и обновление элементов на странице
-// const loadUserInfo = () => {
-//   getUserInfo()
-//     .then(userInfo => {
-//       // Обновление элементов на странице с информацией о пользователе
-//       const userNameElement = document.querySelector('.profile__title');
-//       const userAboutElement = document.querySelector('.profile__description');
-//       const userAvatarElement = document.querySelector('.profile__image');
-
-//       userNameElement.textContent = userInfo.name;
-//       userAboutElement.textContent = userInfo.about;
-//       userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
-//     })
-//     .catch(error => {
-//       console.error('Error:', error);
-//     });
-// };
-// // Загрузка информации о пользователе при загрузке страницы
-// loadUserInfo();
-
 // Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
 const loadData = () => {
   Promise.all([getUserInfo(), getCards()])
@@ -554,7 +408,7 @@ const loadData = () => {
       const userAvatarElement = document.querySelector('.profile__image');
 
       userNameElement.textContent = userInfo.name;
-      userAboutElement.textContent = userInfo.about;
+      userAboutElement.textContent = userInfo.description;
       userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
 
       // Обрабатываем полученные карточки здесь
@@ -577,7 +431,7 @@ const handleProfileUpdate = () => {
   const newAbout = prompt('Введите новую информацию о себе');
 
   if (newName || newAbout) {
-    updateUserInfo(newName, newAbout)
+    updateUserInfoApi(newName, newAbout)
       .then(updatedUserInfoApi => {
         console.log('Данные профиля обновлены:', updatedUserInfoApi);
         loadData(); // Обновляем информацию о пользователе после успешного обновления

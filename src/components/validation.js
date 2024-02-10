@@ -1,14 +1,15 @@
-// function enableValidation(config) {
-//   const forms = document.querySelectorAll(config.formSelector);
+export function enableValidation(config) {
 
-//   forms.forEach((formElement) => {
-//     formElement.addEventListener('submit', function (evt) {
-//       evt.preventDefault();
-//     });
+  const forms = document.querySelectorAll(config.formSelector);
 
-//     setEventListeners(formElement, config);
-//   });
-// }
+  forms.forEach((formElement) => {
+    formElement.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+    });
+
+    setEventListeners(formElement, config);
+  });
+}
 
 // function setEventListeners(formElement, config) {
 //   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));

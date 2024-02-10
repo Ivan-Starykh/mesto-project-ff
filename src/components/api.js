@@ -1,23 +1,3 @@
-// const config = {
-//   baseUrl: 'https://mesto.nomoreparties.co/v1/wff-cohort-6',
-//   headers: {
-//     authorization: 'abc1f6c4-1bf9-4e36-8508-5e54153145a1',
-//     'Content-Type': 'application/json'
-//   }
-// }
-
-// export const getInitialCards = () => {
-//   return fetch(`${config.baseUrl}/cards`, {
-//     headers: config.headers
-//   })
-//     .then(res => {
-//       if (res.ok) {
-//         return res.json();
-//       }
-// 			 // если ошибка, отклоняем промис
-// 			return Promise.reject(`Ошибка: ${res.status}`);
-//     });
-// } 
 const cohortId = 'wff-cohort-6';
 const token = 'abc1f6c4-1bf9-4e36-8508-5e54153145a1';
 const apiUrl = `https://nomoreparties.co/v1/${cohortId}`;
@@ -45,7 +25,7 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 	};
 	
 	const getUserInfo = () => {
-		return fetch(`${apiUrl}/users/me`, {
+		return fetch(`https://nomoreparties.co/v1/:wff-cohort-6/users/me`, {
 			headers: {
 				authorization: token
 			}
@@ -54,6 +34,7 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 	};
 	
 	const updateUserInfoApi = (name, about) => {
+
 		return fetch(`${apiUrl}/users/me`, {
 			method: 'PATCH',
 			headers: {
@@ -67,9 +48,24 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 		})
 		.then(res => res.json());
 	};
+
+	const addCard = (name, link) => {
+		return fetch(`${apiUrl}/cards`, {
+			method: 'POST',
+			headers: {
+				authorization: token,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				name: name,
+				link: link
+			})
+		})
+		.then(res => res.json());
+	};
 	// Другие запросы по аналогии
 	
-	export { getCards, getUserInfo, updateUserInfoApi };
+	export { getCards, getUserInfo, updateUserInfoApi, addCard };
 
 
 
