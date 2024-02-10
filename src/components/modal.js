@@ -35,3 +35,7 @@ export function handleModalEscPress(event) {
 export function setModalClickListener(modal, handleModalOverlayClick) {
   modal.addEventListener("click", handleModalOverlayClick);
 }
+
+
+
+

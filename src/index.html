@@ -56,21 +56,25 @@
             class="popup__close"
           ></button>
           <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="popup__form" name="editProfile">
+          <form class="popup__form" name="editProfile" novalidate>
             <input
               type="text"
               name="name"
               class="popup__input popup__input_type_name"
               placeholder="Имя"
               required
+							pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,40}"
             />
+						<span class="popup__input_type_error" id="name-input-error"></span>
             <input
               type="text"
               name="description"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
               required
+							pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,200}"
             />
+						<span class="popup__input_type_error" id="about-input-error"></span>
             <button
               aria-label="save popup"
               type="submit"
@@ -89,21 +93,25 @@
             class="popup__close"
           ></button>
           <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" name="newPlace">
+          <form class="popup__form" name="newPlace" novalidate>
             <input
               type="text"
               name="placeName"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
+							pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}"
               required
             />
+						<span class="popup__input_type_error" id="place-input-error"></span>
             <input
               type="url"
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
+							pattern="^(http[s]?:\/\/)?[\w.-]+(\.[\w.-]+)+[\w\-?=%.]*$"
               required
             />
+						<span class="popup__input_type_error" id="link-input-error"></span>
             <button
               aria-label="save popup"
               type="submit"

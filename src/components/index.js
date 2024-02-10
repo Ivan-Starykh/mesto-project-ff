@@ -18,9 +18,11 @@ import {
   setModalClickListener,
   handleModalEscPress,
 } from "./modal.js";
+// Подключаем validation.js
+import {  } from './validation';
+import { getInitialCards } from './api.js'
 
 const cardContainer = document.querySelector(".places__list");
-
 const imagePopup = document.querySelector(".popup_type_image");
 const cardImage = imagePopup.querySelector(".popup__image");
 const imageCaption = imagePopup.querySelector(".popup__caption");
@@ -30,7 +32,6 @@ const editPopup = document.querySelector(".popup_type_edit");
 const editForm = document.forms.editProfile;
 const nameInput = editForm.elements.name;
 const aboutInput = editForm.elements.description;
-
 const userProfileCard = document.querySelector(".profile__info");
 const userName = userProfileCard.querySelector(".profile__title");
 const userAbout = userProfileCard.querySelector(".profile__description");
@@ -56,6 +57,18 @@ editProfileButton.addEventListener("click", function () {
 
   // Открываем модальное окно
   openModal(editPopup);
+
+	// Первоначальная очистка при открытии формы
+	clearValidation(profileForm, validationConfig);
+// Настройка валидации и состояния кнопки
+enableValidation(validationConfig);
+toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
+
+// Сбрасываем значения полей и ошибок
+hideInputError(profileForm, namePopupInput, nameError, validationConfig);
+hideInputError(profileForm, descriptionInput, descriptionError, validationConfig);
+hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
+hideInputError(profileForm, linkInput, linkError, validationConfig);
 });
 
 // Функция для обновления информации на странице
@@ -111,7 +124,6 @@ function openImagePopupCallback(imageUrl, imageName) {
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const modal = button.closest(".popup");
-    // modal.classList.add("popup_is-animated");
     closeModal(modal);
   });
 });
@@ -154,3 +166,347 @@ addCardForm.addEventListener("submit", function (evt) {
   // Очищаем форму
   addCardForm.reset();
 });
+
+
+// валидация формы 
+
+// Настройки валидации
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
+
+
+
+// Функция включения валидации
+function enableValidation(config) {
+  const forms = document.querySelectorAll(config.formSelector);
+
+  forms.forEach((formElement) => {
+    formElement.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+    });
+
+    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+    const buttonElement = formElement.querySelector(config.submitButtonSelector);
+
+    setEventListeners(formElement, config, inputList, buttonElement);
+    toggleButtonState(formElement, inputList, buttonElement, config);
+  });
+}
+
+// Функция проверки валидности поля
+function checkInputValidity(formElement, inputElement, errorElement, config) {
+  const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
+  const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
+  const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
+  const isLinkValid = /^(http[s]?:\/\/)?[\w.-]+(\.[\w.-]+)+[\w\-?=%.]*$/.test(inputElement.value);
+
+  if (inputElement.value.trim() === '') {
+    showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
+  } else {
+    hideInputError(formElement, inputElement, errorElement, config);
+
+	switch (inputElement.name) {
+		case 'name':
+			if (!isNameValid) {
+				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
+			}
+			break;
+		case 'description':
+			if (!isDescriptionValid) {
+				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
+			}
+			break;
+		case 'placeName':
+			if (!isPlaceNameValid) {
+				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
+			}
+			break;
+		case 'link':
+			if (!isLinkValid) {
+				showInputError(formElement, inputElement, errorElement, 'Введите корректный адрес сайта', config);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+  toggleButtonState(formElement, inputList, buttonElement, config);
+}
+
+
+// Функция переключения состояния кнопки
+function toggleButtonState(formElement, inputList, buttonElement, config) {
+  const isFormValid = inputList.every((inputElement) => inputElement.validity.valid);
+
+  if (isFormValid) {
+    buttonElement.classList.remove(config.inactiveButtonClass);
+    buttonElement.disabled = false;
+  } else {
+    buttonElement.classList.add(config.inactiveButtonClass);
+    buttonElement.disabled = true;
+  }
+}
+
+// Функция установки обработчиков событий
+function setEventListeners(formElement, config, inputList, buttonElement) {
+  inputList.forEach((inputElement) => {
+    // const errorElement = formElement.querySelector(`#${inputElement.name}-error`);
+		const errorElement = inputElement.nextElementSibling;
+
+    inputElement.addEventListener('input', function () {
+      checkInputValidity(formElement, inputElement, errorElement, config);
+      toggleButtonState(formElement, inputList, buttonElement, config);
+    });
+  });
+}
+
+// Функция отображения ошибки
+function showInputError(formElement, inputElement, errorElement, errorMessage, config) {
+  inputElement.classList.add(config.inputErrorClass);
+  if (errorElement) {
+    errorElement.textContent = errorMessage;
+    errorElement.classList.add(config.errorClass);
+  }
+}
+
+// Функция скрытия ошибки
+function hideInputError(formElement, inputElement, errorElement, config) {
+  if (errorElement) {
+    inputElement.classList.remove(config.inputErrorClass);
+    errorElement.classList.remove(config.errorClass);
+    errorElement.textContent = '';
+  }
+}
+
+// Функция проверки наличия невалидных полей
+function hasInvalidInput(inputList) {
+  return inputList.some((inputElement) => !inputElement.validity.valid);
+}
+
+// Функция очистки валидации
+function clearValidation(formElement, config) {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const errorList = Array.from(formElement.querySelectorAll(config.inputErrorClass));
+
+  inputList.forEach((inputElement) => {
+		const errorElement = inputElement.nextElementSibling;
+    hideInputError(formElement, inputElement, errorElement, config);
+				
+		if (inputElement) {
+		inputElement.classList.remove(config.inputErrorClass);
+		inputElement.value = '';
+		}
+				if (inputElement.name === 'link' || inputElement.name === 'placeName') {
+      // Очищаем сообщения об ошибке для полей "link" и "placeName"
+      const specificErrorElement = formElement.querySelector(`.popup__input_type_error`);
+      hideInputError(formElement, inputElement, specificErrorElement, config);
+    }
+	});
+
+	errorList.forEach((errorElement) => {
+    if (errorElement) {
+      errorElement.textContent = '';
+      errorElement.classList.remove(config.errorClass); // удаление класса ошибки
+    }
+  });
+		// if (inputElement.name === 'link' || inputElement.name === 'placeName') {
+    //   // Очищаем сообщения об ошибке для полей "link" и "placeName"
+    //   const specificErrorElement = formElement.querySelector(`.popup__input_type_error`);
+    //   hideInputError(formElement, inputElement, specificErrorElement, config);
+    // }
+	
+  formElement.reset();// Очищаем всю форму
+  };
+
+const formElement = document.querySelector(validationConfig.formSelector);
+
+toggleButtonState(formElement, Array.from(formElement.querySelectorAll('.popup__input')), formElement.querySelector('.popup__button'), validationConfig);
+
+const profileForm = document.querySelector('.popup__form');
+  // Первоначальная очистка при открытии формы
+  clearValidation(profileForm, validationConfig);
+enableValidation(validationConfig);
+// Настройка валидации и состояния кнопки
+enableValidation(validationConfig);
+toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
+// Убираем ошибки при вводе
+clearValidation(profileForm, validationConfig);
+// Сбрасываем значения полей и ошибок
+hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
+  // Добавляем событие только после полной загрузки DOM
+  placeNameInput.addEventListener('input', function () {
+    checkInputValidity(profileForm, placeNameInput, placeNameError, validationConfig);
+  });
+
+const nameError = profileForm.querySelector('#name-input-error');
+const descriptionError = profileForm.querySelector('#about-input-error');
+const placeNameError = profileForm.querySelector('#place-input-error');
+const linkError = profileForm.querySelector('#link-input-error');
+
+profileForm.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+});
+
+const namePopupInput = profileForm.querySelector('.popup__input_type_name');
+const descriptionInput = profileForm.querySelector('.popup__input_type_description');
+const placeNameInput = profileForm.querySelector('.popup__input_type_card-name');
+const linkInput = profileForm.querySelector('.popup__input_type_url');
+
+// Добавим события для инпутов
+namePopupInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
+});
+
+descriptionInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, descriptionInput, descriptionError, validationConfig);
+});
+
+placeNameInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, placeNameInput, placeNameError, validationConfig);
+});
+
+linkInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, linkInput, linkError, validationConfig);
+});
+
+
+
+
+
+
+
+
+// const formElement = document.querySelector('.popup__form');
+// const nameFormInput = formElement.querySelector('.popup__input_type_name');
+// const descriptionInput = formElement.querySelector('.popup__input_type_description');
+
+// const nameError = formElement.querySelector('#name-input-error');
+// const descriptionError = formElement.querySelector('#about-input-error');
+
+// const resetValidation = (formElement) => {
+//   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
+//   const errorList = Array.from(formElement.querySelectorAll('.form__input-error'));
+
+//   inputList.forEach((inputElement) => {
+//     const errorElement = formElement.querySelector(`#${inputElement.name}-error`);
+//     hideInputError(formElement, inputElement, errorElement);
+// 		if (inputElement) {
+// 		inputElement.classList.remove('popup__input_type_error');
+// 		}
+//   });
+
+// 	errorList.forEach((errorElement) => {
+// 		if (errorElement) {
+// 			errorElement.textContent = '';
+// 		}
+// 	});
+	
+//   // сброс состояния кнопки
+//   const buttonElement = formElement.querySelector('.button.popup__button');
+//   buttonElement.disabled = true;
+//   buttonElement.classList.add('button_inactive');
+// };
+
+// const showInputError = (formElement, inputElement, errorElement, errorMessage) => {
+//   inputElement.classList.add('popup__input_type_error');
+//   errorElement.textContent = errorMessage;
+//   errorElement.classList.add('popup__input-error_active');
+// };
+
+// const hideInputError = (formElement, inputElement, errorElement) => {
+//   if (errorElement) { // Проверяем, существует ли элемент ошибки
+//     inputElement.classList.remove('popup__input_type_error');
+//     errorElement.classList.remove('popup__input-error_active');
+//     errorElement.textContent = '';
+//   }
+// };
+
+
+// const isNameValid = (name) => /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(name);
+// const isDescriptionValid = (description) => /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(description);
+
+// const checkInputValidity = (formElement, inputElement, errorElement) => {
+//   if (!inputElement.validity.valid) {
+//     showInputError(formElement, inputElement, errorElement, inputElement.validationMessage);
+//   } else {
+//     hideInputError(formElement, inputElement, errorElement);
+
+//     if (inputElement.name === 'name' && !isNameValid(inputElement.value)) {
+//       showInputError(formElement, inputElement, errorElement, 'Минимальное количество символов: 2. Длинна текста сейчас: 1 символ.');
+//     } else if (inputElement.name === 'description' && !isDescriptionValid(inputElement.value)) {
+//       showInputError(formElement, inputElement, errorElement, 'Минимальное количество символов: 2. Длинна текста сейчас: 1 символ.');
+//     }
+//   }
+//   toggleButtonState(formElement, Array.from(formElement.querySelectorAll('.popup__input')), formElement.querySelector('.button.popup__button'));
+// };
+
+// const hasInvalidInput = (inputList) => {
+//   return inputList.some((inputElement) => {
+//     return !inputElement.validity.valid || (inputElement.name === 'name' && !isNameValid(inputElement.value)) || (inputElement.name === 'description' && !isDescriptionValid(inputElement.value));
+//   });
+// };
+
+// const toggleButtonState = (formElement, inputList, buttonElement, isFormOpen) => {
+//   if (isFormOpen) {
+//     // Если форма открыта, применить стили .popup__button
+//     buttonElement.classList.remove('button_inactive');
+//     buttonElement.disabled = false;
+//   } else {
+//     // Если форма закрыта, применить стили .button_inactive
+//     buttonElement.classList.add('button_inactive');
+//     buttonElement.disabled = true;
+//   }
+
+//   if (hasInvalidInput(inputList)) {
+//     buttonElement.disabled = true;
+//     buttonElement.classList.add('button_inactive');
+//   } else {
+//     buttonElement.disabled = false;
+//     buttonElement.classList.remove('button_inactive');
+//   }
+// };
+
+//   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
+//   const buttonElement = formElement.querySelector('.button.popup__button');
+// const setEventListeners = (formElement) => {
+
+//   // const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
+//   // const buttonElement = formElement.querySelector('.button.popup__button');
+//   inputList.forEach((inputElement) => {
+//     const errorElement = formElement.querySelector(`#${inputElement.name}-error`);
+//     inputElement.addEventListener('input', function () {
+//       checkInputValidity(formElement, inputElement, errorElement);
+//       toggleButtonState(formElement, inputList, buttonElement);
+//     });
+//   });
+// };
+
+
+// formElement.addEventListener('submit', function (evt) {
+//   evt.preventDefault();
+// });
+
+// nameFormInput.addEventListener('input', function () {
+//   checkInputValidity(formElement, nameFormInput, nameError);
+// });
+
+// descriptionInput.addEventListener('input', function () {
+//   checkInputValidity(formElement, descriptionInput, descriptionError);
+// });
+
+getInitialCards()
+  .then((result) => {
+    // обрабатываем результат
+  })
+  .catch((err) => {
+    console.log(err); // выводим ошибку в консоль
+  }); 

@@ -19,9 +19,18 @@
   cursor: pointer;
 }
 
+.popup__button_disabled {
+  background-color: rgba(0, 0, 0, 0); 
+	border: 1px solid rgb(197 197 197);
+  color: rgb(197 197 197); /* Цвет текста неактивной кнопки */
+  cursor: not-allowed; /* Запрещаем курсору при неактивной кнопке */
+}
+
+
 @media screen and (max-width: 568px) {
   .popup__button {
     font-size: 14px;
     line-height: 17px;
   }
 }
+
