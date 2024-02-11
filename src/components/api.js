@@ -111,6 +111,8 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 			});
 	};
 
+	
+
 	// Другие запросы по аналогии
 	
 	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike  };

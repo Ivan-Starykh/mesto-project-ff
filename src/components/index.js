@@ -40,6 +40,16 @@ const editProfileButton = userProfileCard.querySelector(
   ".profile__edit-button"
 );
 
+// Редактируем аватарку
+	const editAvatarIcon = document.querySelector('.profile__image');
+	const avatarPopup = document.querySelector('.popup_type_edit-avatar');
+	// const closeButtons = document.querySelectorAll(".popup__close");
+	const avatarLinkInput = document.getElementById('avatarLink');
+	// const linkError = profileForm.querySelector('#link-input-error');
+	// const userAvatarElement = document.querySelector('.profile__image');
+	// const profileForm = document.querySelector('.popup__form');
+	// const updateProfileButton = document.querySelector('.popup__button');
+
 // Получаем элементы модальных окон
 const editModal = document.querySelector(".popup_type_edit");
 const addModal = document.querySelector(".popup_type_new-card");
@@ -75,6 +85,12 @@ hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
 hideInputError(profileForm, linkInput, linkError, validationConfig);
 });
 
+// Добавляем слушатель событий на .profile__image
+editAvatarIcon.addEventListener('click', () => {
+  // Открываем модальное окно
+  openModal(avatarPopup);
+});
+avatarPopup.addEventListener('click', handleModalOverlayClick);
 
 // Функция для обновления информации на сервере и закрытия модального окна
 function updateUserInfo(modal) {
@@ -237,7 +253,7 @@ function checkInputValidity(formElement, inputElement, errorElement, config) {
   const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
   const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
   const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
-  const isLinkValid = /^(http[s]?:\/\/)?[\w.-]+(\.[\w.-]+)+[\w\-?=%.]*$/.test(inputElement.value);
+  const isLinkValid = /^(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/.test(inputElement.value);
 
   if (inputElement.value.trim() === '') {
     showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
@@ -262,7 +278,7 @@ function checkInputValidity(formElement, inputElement, errorElement, config) {
 			break;
 		case 'link':
 			if (!isLinkValid) {
-				showInputError(formElement, inputElement, errorElement, 'Введите корректный адрес сайта', config);
+				showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
 			}
 			break;
 		default:
@@ -404,7 +420,7 @@ placeNameInput.addEventListener('input', function () {
 });
 
 linkInput.addEventListener('input', function () {
-  checkInputValidity(profileForm, linkInput, linkError, validationConfig);
+  checkInputValidity(profileForm, linkInput, linkError, validationConfig, 'link');
 });
 
 
