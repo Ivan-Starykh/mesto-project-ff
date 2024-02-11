@@ -18,23 +18,40 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 	const getCards = () => {
 		return fetch(`${apiUrl}/cards`, {
 			headers: {
-				authorization: token
-			}
+				authorization: token,
+			},
 		})
-		.then(res => res.json());
+			.then(res => {
+				if (!res.ok) {
+					throw new Error(`Error: ${res.status}`);
+				}
+				return res.json();
+			})
+			.then(data => {
+				if (!data || !Array.isArray(data)) {
+					throw new Error('Invalid cards data received from the server.');
+				}
+				return data;
+			});
 	};
 	
-	const getUserInfo = () => {
-		return fetch(`https://nomoreparties.co/v1/:wff-cohort-6/users/me`, {
+
+	export function getUserProfile() {
+		return fetch(`${apiUrl}/users/me`, {
+			method: 'GET',
 			headers: {
-				authorization: token
-			}
+				authorization: token,
+			},
 		})
-		.then(res => res.json());
-	};
+		.then(response => {
+			if (!response.ok) {
+				return Promise.reject(`Error: ${response.status}`);
+			}
+			return response.json();
+		});
+	}
 	
 	const updateUserInfoApi = (name, about) => {
-
 		return fetch(`${apiUrl}/users/me`, {
 			method: 'PATCH',
 			headers: {
@@ -63,9 +80,44 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 		})
 		.then(res => res.json());
 	};
+
+	function deleteCard(cardId) {
+		return fetch(`${apiUrl}/cards/${cardId}`, {
+			method: 'DELETE',
+			headers: {
+				authorization: token,
+			},
+		})
+		.then(response => {
+			if (!response.ok) {
+				return Promise.reject(`Error: ${response.status}`);
+			}
+		});
+	}
+
+	const handleLike = (cardId, isLiked) => {
+		const method = isLiked ? 'DELETE' : 'PUT';
+		return fetch(`${apiUrl}/cards/likes/${cardId}`, {
+			method,
+			headers: {
+				authorization: token,
+			},
+		})
+			.then(response => {
+				if (!response.ok) {
+					return Promise.reject(`Error: ${response.status}`);
+				}
+				return response.json();
+			});
+	};
+
 	// Другие запросы по аналогии
 	
-	export { getCards, getUserInfo, updateUserInfoApi, addCard };
+	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike  };
 
 
-
+	// {name: 'Иван Николаевич', 
+	// about: 'Яндекс Практикум', 
+	// avatar: 'https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg', 
+	// _id: 'c5e7b998f871f8fa8c4bb293', 
+	// cohort: 'wff-cohort-6'}

@@ -17,10 +17,11 @@ import {
   handleModalOverlayClick,
   setModalClickListener,
   handleModalEscPress,
+	fillProfileForm
 } from "./modal.js";
 // Подключаем validation.js
 // import {  } from './validation';
-import { getCards, getUserInfo,updateUserInfoApi, addCard } from './api.js';
+import { getCards,updateUserInfoApi, addCard, getUserProfile } from './api.js';
 
 const cardContainer = document.querySelector(".places__list");
 const imagePopup = document.querySelector(".popup_type_image");
@@ -56,7 +57,10 @@ editProfileButton.addEventListener("click", function () {
   aboutInput.value = userAbout.textContent;
 
   // Открываем модальное окно
-  openModal(editPopup);
+  openModal(editPopup, editForm);
+
+	 // Передаем форму в функцию fillProfileForm
+	fillProfileForm(editForm);
 
 	// Первоначальная очистка при открытии формы
 	clearValidation(profileForm, validationConfig);
@@ -119,6 +123,13 @@ function addCards(
 ) {
   getCards()
     .then(cards => {
+			if (!cards || !Array.isArray(cards)) {
+        console.error('Error: Invalid cards data received from the server.');
+        return;
+      }
+
+			const cardContainer = document.querySelector(".places__list");
+
       for (let card of cards) {
         const cardElement = createCard(
           card,
@@ -399,18 +410,20 @@ linkInput.addEventListener('input', function () {
 
 
 // Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
-const loadData = () => {
-  Promise.all([getUserInfo(), getCards()])
-    .then(([userInfo, cards]) => {
+const userNameElement = document.querySelector('.profile__title');
+const userAboutElement = document.querySelector('.profile__description');
+const userAvatarElement = document.querySelector('.profile__image');
       // Обновление элементов на странице с информацией о пользователе
-			const userNameElement = document.querySelector('.profile__title');
-      const userAboutElement = document.querySelector('.profile__description');
-      const userAvatarElement = document.querySelector('.profile__image');
+function updateProfileInfo(userInfo) {
+	userNameElement.textContent = userInfo.name;
+	userAboutElement.textContent = userInfo.description;
+	userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
+}
 
-      userNameElement.textContent = userInfo.name;
-      userAboutElement.textContent = userInfo.description;
-      userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
-
+const loadData = () => {
+  Promise.all([getUserProfile(), getCards()])
+    .then(([userInfo, cards]) => {
+			updateProfileInfo(userInfo); // Обновляем информацию о пользователе после получения
       // Обрабатываем полученные карточки здесь
 			addCards(
         сardDelete,
@@ -418,8 +431,6 @@ const loadData = () => {
         handleCardLikeCallback
       );
     })
-    //   console.log(cards);
-    // })
     .catch(error => {
       console.error('Error:', error);
     });
@@ -461,7 +472,7 @@ getCards()
   });
 
 // Использование запроса на получение информации о пользователе
-getUserInfo()
+getUserProfile()
   .then(userInfo => {
     console.log(userInfo);
     // Обрабатывайте полученную информацию о пользователе здесь

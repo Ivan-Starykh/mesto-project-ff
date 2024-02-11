@@ -6,8 +6,20 @@
 //  события клика по оверлею;
 // Функция для открытия модального окна
 
-export function openModal(modal) {
+import { getUserProfile } from './api.js';
+
+export function openModal(modal, editForm) {
   modal.classList.add("popup_is-opened");
+	  // Загрузка информации о пользователе при открытии профильной формы
+		if (modal.classList.contains('popup_type_edit')&& editForm) {
+			getUserProfile()
+				.then(userInfo => {
+					fillProfileForm(editForm, userInfo);
+				})
+				.catch(error => {
+					console.error('Error loading user profile:', error);
+				});
+		}
   document.addEventListener("keydown", handleModalEscPress);
 }
 
@@ -36,6 +48,22 @@ export function setModalClickListener(modal, handleModalOverlayClick) {
   modal.addEventListener("click", handleModalOverlayClick);
 }
 
+// Функция для заполнения формы профиля
+export function fillProfileForm(editForm, userInfo) {
+  const nameInput = editForm.elements.name;
+  const aboutInput = editForm.elements.description;
+	if (userInfo && userInfo.name) {
+    nameInput.value = userInfo.name;
+  }
+
+  if (userInfo && userInfo.about) {
+    aboutInput.value = userInfo.about;
+  }
+  // nameInput.value = userInfo.name;
+  // aboutInput.value = userInfo.about;
+
+  // Другие поля формы, если они есть
+}
 
 
 
