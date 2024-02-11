@@ -49,8 +49,6 @@ export function handleCardLikeCallback(card, cardId, likeButton) {
 
   handleLike(cardId, !isLiked)
     .then(updatedCard => {
-      // Обновите card.likes на основе ответа от сервера
-      // Например, если сервер возвращает поле "likes" с обновленным массивом лайков
       card.likes = updatedCard.likes;
 
       // Обновите визуальное представление
@@ -58,8 +56,7 @@ export function handleCardLikeCallback(card, cardId, likeButton) {
 
       // Обновите количество лайков в соответствующем элементе
       const likeCounter = likeButton.closest(".card").querySelector(".card__like-counter");
-      // likeCounter.textContent = isLiked ? parseInt(likeCounter.textContent) - 1 : parseInt(likeCounter.textContent) + 1;
-			likeCounter.textContent = updatedCard.likes.length;
+      likeCounter.textContent = isLiked ? parseInt(likeCounter.textContent) - 1 : parseInt(likeCounter.textContent) + 1;
 		})
     .catch(error => console.error(`Error handling like: ${error.message}`));
 }
