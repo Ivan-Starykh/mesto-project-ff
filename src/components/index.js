@@ -21,7 +21,7 @@ import {
 } from "./modal.js";
 // Подключаем validation.js
 // import {  } from './validation';
-import { getCards,updateUserInfoApi, addCard, getUserProfile } from './api.js';
+import { getCards,updateUserInfoApi, addCard, getUserProfile, checkImageValidity } from './api.js';
 
 const cardContainer = document.querySelector(".places__list");
 const imagePopup = document.querySelector(".popup_type_image");
@@ -249,7 +249,7 @@ function enableValidation(config) {
 }
 
 // Функция проверки валидности поля
-function checkInputValidity(formElement, inputElement, errorElement, config) {
+async function checkInputValidity(formElement, inputElement, errorElement, config) {
   const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
   const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
   const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
@@ -276,15 +276,20 @@ function checkInputValidity(formElement, inputElement, errorElement, config) {
 				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
 			}
 			break;
-		case 'link':
-			if (!isLinkValid) {
-				showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
-			}
+			case 'link':
+        if (!isLinkValid) {
+          showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
+        } else {
+          const isImageURLValid = await checkImageValidity(inputElement.value);
+          if (!isImageURLValid) {
+            showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
+          }
+        }
 			break;
 		default:
 			break;
 	}
-}
+	}
 
 const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
@@ -429,6 +434,7 @@ linkInput.addEventListener('input', function () {
 const userNameElement = document.querySelector('.profile__title');
 const userAboutElement = document.querySelector('.profile__description');
 const userAvatarElement = document.querySelector('.profile__image');
+
       // Обновление элементов на странице с информацией о пользователе
 function updateProfileInfo(userInfo) {
 	userNameElement.textContent = userInfo.name;

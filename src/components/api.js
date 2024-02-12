@@ -111,11 +111,24 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 			});
 	};
 
+	async function checkImageValidity(url) {
+		return new Promise(resolve => {
+			const img = new Image();
+			img.onload = function () {
+				// Изображение успешно загружено, считаем его валидным
+				resolve(true);
+			};
+			img.onerror = function () {
+				// Изображение не загрузилось, считаем его недействительным
+				resolve(false);
+			};
+			img.src = url;
+		});
+	}
 	
-
 	// Другие запросы по аналогии
 	
-	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike  };
+	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike, checkImageValidity };
 
 
 	// {name: 'Иван Николаевич', 
