@@ -2,37 +2,28 @@
 // работы с карточками: функция создания
 // карточки, функции-обработчики событий
 // удаления и лайка карточки;
-import { handleLike, deleteCard } from './api';
+import { handleLike } from './api';
 const cardTemplate = document.querySelector("#card-template").content;
 
 export function createCard(
   card,
   deleteCardCallback,
   openImagePopupCallback,
-  handleCardLikeCallback,
-	isOwner
+  handleCardLikeCallback
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
-
   cardElement.querySelector(".card__title").textContent = card.name;
   cardElement.querySelector(".card__image").src = card.link;
   const cardImage = cardElement.querySelector(".card__image");
   cardImage.src = card.link;
   cardImage.setAttribute("alt", card.name);
 
-// Сохраняем _id карточки в data-атрибуте
-cardElement.dataset.cardId = card._id;
-const cardId = card._id;
   const deleteButton = cardElement.querySelector(".card__delete-button");
+  deleteButton.addEventListener("click", () => deleteCardCallback(cardElement));
 
-	if (isOwner) {
-    deleteButton.style.display = "block";
-    deleteButton.addEventListener("click", () => deleteCardCallback(cardId));
-  } else {
-    deleteButton.style.display = "none";
-  }
+	
 
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", () =>
@@ -51,32 +42,6 @@ const cardId = card._id;
 
 export function сardDelete(card) {
   card.remove();
-}
-
-// Обработчик события для кнопки удаления
-function handleDeleteCard(event) {
-  const cardElement = event.target.closest(card);
-  const cardId = cardElement.dataset.cardId;
-
-  // Вызываем функцию удаления карточки
-  deleteCardCallback(cardId, cardElement);
-}
-export function deleteCardCallback(cardId, cardElement) {
-// Вызываем функцию удаления карточки
-deleteCard(cardId)
-.then(() => {
-	console.log('Card deleted successfully:', cardId);
-
-	      // Если удаление прошло успешно, удаляем карточку из DOM
-				if (cardElement) {
-					сardDelete(cardElement);
-				} else {
-					console.error('Card element not found in the DOM');
-				}
-			})
-.catch(error => {
-	console.error('Error deleting card:', error);
-});
 }
 
 export function handleCardLikeCallback(card, cardId, likeButton) {

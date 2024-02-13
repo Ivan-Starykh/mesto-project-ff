@@ -10,7 +10,7 @@
 
 import "../pages/index.css";
 import { initialCards } from "./cards.js";
-import { createCard, сardDelete, handleCardLikeCallback, deleteCardCallback } from "./card.js";
+import { createCard, сardDelete, handleCardLikeCallback } from "./card.js";
 import {
   openModal,
   closeModal,
@@ -21,23 +21,12 @@ import {
 } from "./modal.js";
 // Подключаем validation.js
 // import {  } from './validation';
-import { getCards,updateUserInfoApi, addCard, getUserProfile, checkImageValidity, deleteCard, updateAvatar } from './api.js';
+import { getCards,updateUserInfoApi, addCard, getUserProfile, checkImageValidity, updateAvatar } from './api.js';
 
-document.addEventListener('DOMContentLoaded', function () {
 const cardContainer = document.querySelector(".places__list");
 const imagePopup = document.querySelector(".popup_type_image");
 const cardImage = imagePopup.querySelector(".popup__image");
 const imageCaption = imagePopup.querySelector(".popup__caption");
-
-// Настройки валидации
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible',
-};
 
 // Редактируем профиль
 const editPopup = document.querySelector(".popup_type_edit");
@@ -50,25 +39,12 @@ const userAbout = userProfileCard.querySelector(".profile__description");
 const editProfileButton = userProfileCard.querySelector(
   ".profile__edit-button"
 );
-const profileForm = document.querySelector('.popup__form');
-const namePopupInput = profileForm.querySelector('.popup__input_type_name');
-const descriptionInput = document.querySelector('.popup__input_type_description');
-const placeNameInput = document.querySelector('.popup__input_type_card-name');
-const linkInput = document.querySelector('.popup__input_type_url');
-const formElement = document.querySelector('.popup__form');
-
-
 
 // Редактируем аватарку
-// const editAvatarIcon = document.querySelector('.profile__image');
-// const avatarPopup = document.querySelector('.popup_type_edit-avatar');
-// const updateAvatarButton = document.querySelector('.popup__button');
-// const avatarLinkInput = document.querySelector('.popup__input_type_url');
-
-const editAvatarIcon = document.querySelector('.profile__image');
-const avatarPopup = document.querySelector('.popup_type_edit-avatar');
-const avatarLinkInput = document.querySelector('.popup__input_type_url');
-const updateAvatarButton = document.querySelector('.popup__button');
+	const editAvatarIcon = document.querySelector('.profile__image');
+	const avatarPopup = document.querySelector('.popup_type_edit-avatar');
+	const updateAvatarButton = document.querySelector('.popup__button');
+	const avatarLinkInput = document.querySelector('.popup__input_type_url');
 
 // Получаем элементы модальных окон
 const editModal = document.querySelector(".popup_type_edit");
@@ -105,6 +81,8 @@ hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
 hideInputError(profileForm, linkInput, linkError, validationConfig);
 });
 
+
+
 // Добавляем слушатель событий на .profile__image
 editAvatarIcon.addEventListener('click', () => {
   // Открываем модальное окно
@@ -133,7 +111,6 @@ function updateUserInfo(modal) {
       console.error('Ошибка при обновлении данных профиля:', error);
     });
 }
-
 
 // Обработчик события submit формы
 editForm.addEventListener("submit", (evt) => {
@@ -238,14 +215,22 @@ addCardForm.addEventListener("submit", function (evt) {
     });
 });
 
-
 // валидация формы 
 
-
+// Настройки валидации
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
 
 // Функция включения валидации
 function enableValidation(config) {
   const forms = document.querySelectorAll(config.formSelector);
+
   forms.forEach((formElement) => {
     formElement.addEventListener('submit', function (evt) {
       evt.preventDefault();
@@ -253,6 +238,7 @@ function enableValidation(config) {
 
     const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
     const buttonElement = formElement.querySelector(config.submitButtonSelector);
+
     setEventListeners(formElement, config, inputList, buttonElement);
     toggleButtonState(formElement, inputList, buttonElement, config);
   });
@@ -263,7 +249,7 @@ async function checkInputValidity(formElement, inputElement, errorElement, confi
   const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
   const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
   const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
-  const isLinkValid = /^(http(s?):)([\/.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)$/.test(inputElement.value);
+  const isLinkValid = /^(http(s?):)([/|.\w\s-])*\.(?:jpg|gif|png)$/i.test(inputElement.value);
 
   if (inputElement.value.trim() === '') {
     showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
@@ -300,30 +286,29 @@ async function checkInputValidity(formElement, inputElement, errorElement, confi
 			break;
 	}
 	}
+
+const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+  toggleButtonState(formElement, inputList, buttonElement, config);
 }
 
-const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-  const buttonElement = formElement.querySelector('.popup__button');
-  toggleButtonState(formElement, inputList, buttonElement);
-
-
-
 // Функция переключения состояния кнопки
-function toggleButtonState(formElement, inputList, buttonElement) {
-  const isFormValid = inputList.every((inputElement) => inputElement.validity.valid);
-
+function toggleButtonState(formElement, inputList, buttonElement, config) {
+  const isFormValid = inputList.every(function (inputElement) {
+    return inputElement.checkValidity();
+	});
   if (isFormValid) {
-    buttonElement.classList.remove('popup__button_disabled');
+    buttonElement.classList.remove(config.inactiveButtonClass);
     buttonElement.disabled = false;
   } else {
-    buttonElement.classList.add('popup__button_disabled');
+    buttonElement.classList.add(config.inactiveButtonClass);
     buttonElement.disabled = true;
   }
 }
 
 // Функция установки обработчиков событий
 function setEventListeners(formElement, config, inputList, buttonElement) {
-  inputList.forEach((inputElement) => {
+  inputList.forEach(function (inputElement) {
 		const errorElement = inputElement.nextElementSibling;
 
     inputElement.addEventListener('input', function () {
@@ -386,6 +371,12 @@ function clearValidation(formElement, config) {
   formElement.reset();// Очищаем всю форму
   };
 
+const formElement = document.querySelector(validationConfig.formSelector);
+
+toggleButtonState(formElement, Array.from(formElement.querySelectorAll('.popup__input')), formElement.querySelector('.popup__button'), validationConfig);
+
+const profileForm = document.querySelector('.popup__form');
+
 
   // Первоначальная очистка при открытии формы
   clearValidation(profileForm, validationConfig);
@@ -410,7 +401,10 @@ profileForm.addEventListener('submit', function (evt) {
   evt.preventDefault();
 });
 
-
+const namePopupInput = profileForm.querySelector('.popup__input_type_name');
+const descriptionInput = profileForm.querySelector('.popup__input_type_description');
+const placeNameInput = profileForm.querySelector('.popup__input_type_card-name');
+const linkInput = profileForm.querySelector('.popup__input_type_url');
 
 // Добавим события для инпутов
 namePopupInput.addEventListener('input', function () {
@@ -429,32 +423,6 @@ linkInput.addEventListener('input', function () {
   checkInputValidity(profileForm, linkInput, linkError, validationConfig, 'link');
 });
 
-
-// Получаем информацию о текущем пользователе
-const currentUserId = "c5e7b998f871f8fa8c4bb293";
-// Функция проверки, является ли пользователь владельцем карточки
-function isOwner(cardId) {
-  // Находим карточку по идентификатору
-  const card = findCardById(cardId);
-  return card && card.owner._id === currentUserId;
-}
-// Определение функции deleteCardCallback
-function deleteCardCallback(cardId) {
- // Вызываем функцию удаления карточки
-  deleteCard(cardId)
-  .then(() => {
-	  console.log('Card deleted successfully:', cardId);
-	})
-	.catch(error => {
-		console.error('Error deleting card:', error);
-	});
-}
-// Определение функции findCardById
-function findCardById(cardId) {
-  // Ваш код поиска карточки по идентификатору
-  // Предположим, что у вас есть массив cards, содержащий объекты карточек
-  return cards.find((card) => card._id === cardId) || null;
-}
 
 // Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
 const userNameElement = document.querySelector('.profile__title');
@@ -478,30 +446,43 @@ const loadData = () => {
         openImagePopupCallback,
         handleCardLikeCallback
       );
-			cards.forEach(card => {
-        // Проверяем, является ли текущий пользователь владельцем карточки
-        const isOwner = card.owner._id === userInfo._id;
-				// Создаем карточку, передавая флаг isOwner
-        const cardElement = createCard(card, deleteCardCallback, openImagePopupCallback, handleCardLikeCallback, isOwner);
-
-        // Добавляем карточку в DOM
-        cardContainer.append(cardElement);
-      });
     })
     .catch(error => {
       console.error('Error:', error);
     });
 };
 
+// Обновление данных профиля
+const handleProfileUpdate = () => {
+  const newName = prompt('Введите новое имя');
+  const newAbout = prompt('Введите новую информацию о себе');
+
+  if (newName || newAbout) {
+    updateUserInfoApi(newName, newAbout)
+      .then(updatedUserInfoApi => {
+        console.log('Данные профиля обновлены:', updatedUserInfoApi);
+        loadData(); // Обновляем информацию о пользователе после успешного обновления
+      })
+      .catch(error => {
+        console.error('Ошибка при обновлении данных профиля:', error);
+      });
+  }
+};
+
 // Загрузка информации о пользователе и начальных карточек при загрузке страницы
 loadData();
+
+// Добавляем событие для обновления данных профиля (например, по клику на кнопку)
+const updateProfileButton = document.querySelector('.popup__button');
+updateProfileButton.addEventListener('click', handleProfileUpdate);
 
 
 // Использование запроса на получение карточек
 getCards()
   .then(cards => {
     console.log(cards);
-})
+    // Обрабатывайте полученные карточки здесь
+  })
   .catch(error => {
     console.error('Error:', error);
   });
@@ -510,13 +491,12 @@ getCards()
 getUserProfile()
   .then(userInfo => {
     console.log(userInfo);
+    // Обрабатывайте полученную информацию о пользователе здесь
   })
   .catch(error => {
     console.error('Error:', error);
   });
 
-	// console.log(editAvatarIcon, avatarPopup, avatarLinkInput, updateAvatarButton);
-	console.log('Before Update Avatar Button Click Event Listener');
 updateAvatarButton.addEventListener('click', () => {
 	console.log('Update Avatar Button Clicked');
   const newAvatarUrl = avatarLinkInput.value;
@@ -530,4 +510,3 @@ updateAvatarButton.addEventListener('click', () => {
       console.error('Ошибка при обновлении аватара', error);
     });
 });
-})
