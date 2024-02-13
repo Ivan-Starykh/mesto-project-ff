@@ -79,10 +79,9 @@ deleteCard(cardId)
 });
 }
 
-export function handleCardLikeCallback(card, cardId, likeButton) {
-  const isLiked = likeButton.classList.contains("card__like-button_is-active");
+export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 
-  handleLike(cardId, !isLiked)
+  handleLike(cardId, isLiked)
     .then(updatedCard => {
       card.likes = updatedCard.likes;
 

@@ -57,18 +57,11 @@ const placeNameInput = document.querySelector('.popup__input_type_card-name');
 const linkInput = document.querySelector('.popup__input_type_url');
 const formElement = document.querySelector('.popup__form');
 
-
-
 // Редактируем аватарку
-// const editAvatarIcon = document.querySelector('.profile__image');
-// const avatarPopup = document.querySelector('.popup_type_edit-avatar');
-// const updateAvatarButton = document.querySelector('.popup__button');
-// const avatarLinkInput = document.querySelector('.popup__input_type_url');
-
 const editAvatarIcon = document.querySelector('.profile__image');
 const avatarPopup = document.querySelector('.popup_type_edit-avatar');
-const avatarLinkInput = document.querySelector('.popup__input_type_url');
-const updateAvatarButton = document.querySelector('.popup__button');
+const avatarLinkInput = document.getElementById('avatarLink');
+const updateAvatarButton = document.getElementById('SaveAvatarButton');
 
 // Получаем элементы модальных окон
 const editModal = document.querySelector(".popup_type_edit");
@@ -113,6 +106,25 @@ editAvatarIcon.addEventListener('click', () => {
 avatarPopup.addEventListener('click', handleModalOverlayClick);
 
 // Функция для обновления информации на сервере и закрытия модального окна
+// function updateUserInfo(modal) {
+//   const newName = nameInput.value;
+//   const newAbout = aboutInput.value;
+
+//   // Вызываем функцию для обновления данных пользователя на сервере
+//   updateUserInfoApi(newName, newAbout)
+//     .then(updatedUserInfo => {
+//       console.log('Данные профиля обновлены:', updatedUserInfo);
+
+//       // Обновляем информацию на странице
+//       userName.textContent = updatedUserInfo.name;
+//       userAbout.textContent = updatedUserInfo.about;
+//       // Закрываем модальное окно
+//       closeModal(modal);
+//     })
+//     .catch(error => {
+//       console.error('Ошибка при обновлении данных профиля:', error);
+//     });
+// }
 function updateUserInfo(modal) {
   const newName = nameInput.value;
   const newAbout = aboutInput.value;
@@ -123,10 +135,7 @@ function updateUserInfo(modal) {
       console.log('Данные профиля обновлены:', updatedUserInfo);
 
       // Обновляем информацию на странице
-      userName.textContent = updatedUserInfo.name;
-      userAbout.textContent = updatedUserInfo.description;
-
-      // Закрываем модальное окно
+      updateProfileInfo(updatedUserInfo); // Добавлена эта строка для обновления DOM
       closeModal(modal);
     })
     .catch(error => {
@@ -134,6 +143,12 @@ function updateUserInfo(modal) {
     });
 }
 
+// Функция для обновления информации в DOM
+function updateProfileInfo(userInfo) {
+  userName.textContent = userInfo.name;
+  userAbout.textContent = userInfo.about;
+  userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
+}
 
 // Обработчик события submit формы
 editForm.addEventListener("submit", (evt) => {
@@ -146,7 +161,6 @@ setModalClickListener(editModal, handleModalOverlayClick);
 setModalClickListener(addModal, handleModalOverlayClick);
 
 addCards(
-  // initialCards,
   сardDelete,
   openImagePopupCallback,
   handleCardLikeCallback
@@ -263,7 +277,7 @@ async function checkInputValidity(formElement, inputElement, errorElement, confi
   const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
   const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
   const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
-  const isLinkValid = /^(http(s?):)([\/.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)$/.test(inputElement.value);
+  const isLinkValid = /\.(jpeg|jpg|png|gif|bmp)$/i.test(inputElement.value);
 
   if (inputElement.value.trim() === '') {
     showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
@@ -411,7 +425,6 @@ profileForm.addEventListener('submit', function (evt) {
 });
 
 
-
 // Добавим события для инпутов
 namePopupInput.addEventListener('input', function () {
   checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
@@ -443,7 +456,7 @@ function deleteCardCallback(cardId) {
  // Вызываем функцию удаления карточки
   deleteCard(cardId)
   .then(() => {
-	  console.log('Card deleted successfully:', cardId);
+    console.log('Card deleted successfully:', cardId);
 	})
 	.catch(error => {
 		console.error('Error deleting card:', error);
@@ -456,17 +469,10 @@ function findCardById(cardId) {
   return cards.find((card) => card._id === cardId) || null;
 }
 
-// Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
+// // Загрузка информации о пользователе и начальных карточек и обновление элементов на странице
 const userNameElement = document.querySelector('.profile__title');
 const userAboutElement = document.querySelector('.profile__description');
 const userAvatarElement = document.querySelector('.profile__image');
-
-      // Обновление элементов на странице с информацией о пользователе
-function updateProfileInfo(userInfo) {
-	userNameElement.textContent = userInfo.name;
-	userAboutElement.textContent = userInfo.description;
-	userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
-}
 
 const loadData = () => {
   Promise.all([getUserProfile(), getCards()])
@@ -515,13 +521,10 @@ getUserProfile()
     console.error('Error:', error);
   });
 
-	// console.log(editAvatarIcon, avatarPopup, avatarLinkInput, updateAvatarButton);
-	console.log('Before Update Avatar Button Click Event Listener');
 updateAvatarButton.addEventListener('click', () => {
-	console.log('Update Avatar Button Clicked');
   const newAvatarUrl = avatarLinkInput.value;
-
-  updateAvatar(newAvatarUrl)
+	console.log('Avatar URL to be sent:', newAvatarUrl);
+  updateAvatar({ avatar: newAvatarUrl })
     .then((data) => {
       console.log('Аватар успешно обновлен', data);
 			closeModal(avatarPopup);
