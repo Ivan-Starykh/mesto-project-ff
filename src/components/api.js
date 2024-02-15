@@ -80,6 +80,7 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 		})
 		.then(res => res.json());
 	};
+	
 
 	const handleLike = (cardId, isLiked) => {
 		const method = isLiked ? 'DELETE' : 'PUT';
