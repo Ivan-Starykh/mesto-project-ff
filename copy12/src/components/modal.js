@@ -7,9 +7,11 @@
 // Функция для открытия модального окна
 
 import { getUserProfile } from './api.js';
+import { clearValidation, validationConfig } from './index.js';
 
 export function openModal(modal, editForm) {
   modal.classList.add("popup_is-opened");
+
 	  // Загрузка информации о пользователе при открытии профильной формы
 		if (modal.classList.contains('popup_type_edit')&& editForm) {
 			getUserProfile()
@@ -24,7 +26,6 @@ export function openModal(modal, editForm) {
 }
 
 export function closeModal(modal) {
-	console.log('Closing modal');
   modal.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleModalEscPress);
 }
@@ -60,8 +61,6 @@ export function fillProfileForm(editForm, userInfo) {
   if (userInfo && userInfo.about) {
     aboutInput.value = userInfo.about;
   }
-  // nameInput.value = userInfo.name;
-  // aboutInput.value = userInfo.about;
 
   // Другие поля формы, если они есть
 }

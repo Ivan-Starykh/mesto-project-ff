@@ -80,20 +80,7 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 		})
 		.then(res => res.json());
 	};
-
-	function deleteCard(cardId) {
-		return fetch(`${apiUrl}/cards/${cardId}`, {
-			method: 'DELETE',
-			headers: {
-				authorization: token,
-			},
-		})
-		.then(response => {
-			if (!response.ok) {
-				return Promise.reject(`Error: ${response.status}`);
-			}
-		});
-	}
+	
 
 	const handleLike = (cardId, isLiked) => {
 		const method = isLiked ? 'DELETE' : 'PUT';
@@ -112,6 +99,9 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 	};
 
 	async function checkImageValidity(url) {
+		if (!url.trim()) {
+			return false;
+	}
 		return new Promise(resolve => {
 			const img = new Image();
 			img.onload = function () {
@@ -125,33 +115,67 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 			img.src = url;
 		});
 	}
-
-	const updateAvatar = (avatarUrl) => {
-		return fetch(`${apiUrl}/users/me/avatar`, {
+	
+	const updateAvatar = (avatar) => {
+		const avatarData = { avatar: avatar.avatar };
+		return fetch(`https://nomoreparties.co/v1/wff-cohort-6/users/me/avatar`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
 				authorization: token,
 			},
-			body: JSON.stringify({
-				avatar: avatarUrl,
-			}),
-		})
+			body: JSON.stringify(avatarData),
+			})
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error(`Ошибка: ${response.status}`);
 			}
 			return response.json();
+		})
+		.then((data) => {
+			console.log('Avatar update response data:', data); // Добавьте эту строку
+		})
+		.catch((error) => {
+			console.error('Ошибка при обновлении аватара:', error);
+			throw error; // Переписываем ошибку для дальнейшей обработки
 		});
 	};
 	
+	// Функция удаления карточки
+	function deleteCard(cardId) {
+    const url = `${apiUrl}/cards/${cardId}`;
+    console.log('DELETE request to:', url);
+
+    return fetch(url, {
+        method: 'DELETE',
+        headers: {
+            authorization: token
+        }
+    })
+    .then(function(response) {
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+					return response.json().then(error => {
+						throw new Error(`Ошибка: ${response.status}, ${error.message}`);
+				});
+        //     throw new Error(`Ошибка: ${response.status}`);
+        }
+    })
+    .catch(function(error) {
+        console.error('Ошибка при удалении карточки:', error);
+    });
+}
+
 	// Другие запросы по аналогии
 	
-	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike, checkImageValidity, updateAvatar };
+	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike, checkImageValidity, updateAvatar, };
 
 
-	// {name: 'Иван Николаевич', 
-	// about: 'Яндекс Практикум', 
-	// avatar: 'https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg', 
-	// _id: 'c5e7b998f871f8fa8c4bb293', 
-	// cohort: 'wff-cohort-6'}
+	// Данные профиля обновлены: 
+	// {name: 'Иван Николаевич ', about: 'Яндекс Практикум ', avatar: 'https://example.com/new-avatar.jpg', _id: 'c5e7b998f871f8fa8c4bb293', cohort: 'wff-cohort-6'}
+	// about: "Яндекс Практикум "
+	// avatar: "https://example.com/new-avatar.jpg"
+	// cohort: "wff-cohort-6"
+	// name: "Иван Николаевич "
+	// _id: "c5e7b998f871f8fa8c4bb293"

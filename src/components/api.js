@@ -133,8 +133,13 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 			return response.json();
 		})
 		.then((data) => {
-			console.log('Avatar update response data:', data); // Добавьте эту строку
-		})
+			console.log('Avatar update response data:', data);
+		      // Обновляем элемент DOM с изображением аватара
+					const userAvatarElement = document.querySelector('.profile__image');
+					if (userAvatarElement) {
+						userAvatarElement.style.backgroundImage = `url(${data.avatar})`;
+					}
+				})
 		.catch((error) => {
 			console.error('Ошибка при обновлении аватара:', error);
 			throw error; // Переписываем ошибку для дальнейшей обработки
@@ -170,12 +175,3 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 	// Другие запросы по аналогии
 	
 	export { getCards, updateUserInfoApi, addCard, deleteCard, handleLike, checkImageValidity, updateAvatar, };
-
-
-	// Данные профиля обновлены: 
-	// {name: 'Иван Николаевич ', about: 'Яндекс Практикум ', avatar: 'https://example.com/new-avatar.jpg', _id: 'c5e7b998f871f8fa8c4bb293', cohort: 'wff-cohort-6'}
-	// about: "Яндекс Практикум "
-	// avatar: "https://example.com/new-avatar.jpg"
-	// cohort: "wff-cohort-6"
-	// name: "Иван Николаевич "
-	// _id: "c5e7b998f871f8fa8c4bb293"
