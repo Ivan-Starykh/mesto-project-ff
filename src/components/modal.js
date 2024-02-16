@@ -7,7 +7,7 @@
 // Функция для открытия модального окна
 
 import { getUserProfile } from './api.js';
-import { clearValidation, validationConfig } from './index.js';
+import { resetFormInputs, resetErrorMessages } from './index.js';
 
 export function openModal(modal, editForm) {
   modal.classList.add("popup_is-opened");
@@ -26,22 +26,27 @@ export function openModal(modal, editForm) {
 }
 
 export function closeModal(modal) {
-  modal.classList.remove("popup_is-opened");
-  document.removeEventListener("keydown", handleModalEscPress);
+  if (modal) {
+    modal.classList.remove("popup_is-opened");
+    resetFormInputs();
+    resetErrorMessages();
+    document.removeEventListener("keydown", handleModalEscPress);
+  }
 }
 
 export function handleModalOverlayClick(event) {
   if (event.target === event.currentTarget) {
     const modal = event.target.closest(".popup");
-    closeModal(modal);
+		if (openModal) {
+			closeModal(modal);
   }
-}
+}}
 
 export function handleModalEscPress(event) {
   if (event.key === "Escape") {
     const openModal = document.querySelector(".popup_is-opened");
     if (openModal) {
-      closeModal(openModal);
+			closeModal(openModal);
     }
   }
 }
@@ -64,6 +69,3 @@ export function fillProfileForm(editForm, userInfo) {
 
   // Другие поля формы, если они есть
 }
-
-
-
