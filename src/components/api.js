@@ -63,7 +63,12 @@ fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
 				about: about
 			})
 		})
-		.then(res => res.json());
+		.then(res => {
+			if (!res.ok) {
+				throw new Error(`Error: ${res.status}`);
+			}
+			return res.json();
+		});
 	};
 
 	const addCard = (name, link) => {

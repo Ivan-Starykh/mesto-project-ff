@@ -1,3 +1,7 @@
+import { 
+	checkImageValidity 
+} from './api.js';
+
 // Настройки валидации
 export const validationConfig = {
   formSelector: '.popup__form',

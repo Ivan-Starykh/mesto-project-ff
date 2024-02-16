@@ -122,6 +122,14 @@ avatarPopup.addEventListener('click', handleModalOverlayClick);
 function updateUserInfo(modal) {
   const newName = nameInput.value;
   const newAbout = aboutInput.value;
+	  // Получаем кнопку в форме
+		const saveButton = modal.querySelector('.popup__button');
+
+		// Сохраняем оригинальный текст кнопки
+		const originalButtonText = saveButton.textContent;
+	
+		// Изменяем текст кнопки на "Сохранение..."
+		saveButton.textContent = 'Сохранение...';
 
   // Вызываем функцию для обновления данных пользователя на сервере
   updateUserInfoApi(newName, newAbout)
@@ -134,6 +142,10 @@ function updateUserInfo(modal) {
     })
     .catch(error => {
       console.error('Ошибка при обновлении данных профиля:', error);
+    })
+		.finally(() => {
+      // Восстанавливаем оригинальный текст кнопки в любом случае (успех или ошибка)
+      saveButton.textContent = originalButtonText;
     });
 }
 
