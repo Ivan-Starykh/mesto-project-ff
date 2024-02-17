@@ -66,8 +66,11 @@
               name="name"
               class="popup__input popup__input_type_name"
               placeholder="Имя"
-              required
-              
+              pattern="^[A-Za-zА-Яа-яЁё\s-]{2,40}$"
+							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+							minlength="2"
+							maxlength="40"
+							required
             />
             <span class="popup__input_type_error" id="name-input-error"></span>
             <input
@@ -75,7 +78,11 @@
               name="description"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
-              required
+              pattern="^[A-Za-zА-Яа-яЁё\s-]$"
+							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+							minlength="2"
+							maxlength="200"
+							required
             />
             <span class="popup__input_type_error" id="about-input-error"></span>
             <button
@@ -102,7 +109,11 @@
               name="placeName"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
-              required
+							pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*)$"
+							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+							minlength="2"
+							maxlength="30"
+							required
             />
             <span class="popup__input_type_error" id="place-input-error"></span>
             <input
@@ -110,7 +121,9 @@
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
-              required
+							pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
+							data-error-message="Введите корректную ссылку на изображение"
+							required
             />
             <span class="popup__input_type_error" id="link-input-error"></span>
             <button
@@ -149,7 +162,9 @@
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
-              required
+							pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
+							data-error-message="Введите корректную ссылку на изображение"
+							required
             />
             <span class="popup__input_type_error" id="link-input-error"></span>
             <button

@@ -42,7 +42,7 @@ export function clearValidation(formElement, config) {
 		}
 				if (inputElement.name === 'link' || inputElement.name === 'placeName') {
       // Очищаем сообщения об ошибке для полей "link" и "placeName"
-      const specificErrorElement = formElement.querySelector(`.popup__input_type_error`);
+      const specificErrorElement = formElement.querySelector(config.inputErrorClass);
       hideInputError(formElement, inputElement, specificErrorElement, config);
     }
 	});
@@ -58,48 +58,23 @@ export function clearValidation(formElement, config) {
   };
 
 	// Функция проверки валидности поля
-	export async function checkInputValidity(formElement, inputElement, errorElement, config) {
-  const isNameValid = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/.test(inputElement.value);
-  const isDescriptionValid = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/.test(inputElement.value);
-  const isPlaceNameValid = /^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*){2,30}/.test(inputElement.value);
-  const isLinkValid = /\.(jpeg|jpg|png|gif|bmp)$/i.test(inputElement.value);
-
-  if (inputElement.value.trim() === '') {
-    showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
-  } else {
-    hideInputError(formElement, inputElement, errorElement, config);
-
-	switch (inputElement.name) {
-		case 'name':
-			if (!isNameValid) {
-				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
-			}
-			break;
-		case 'description':
-			if (!isDescriptionValid) {
-				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
-			}
-			break;
-		case 'placeName':
-			if (!isPlaceNameValid) {
-				showInputError(formElement, inputElement, errorElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', config);
-			}
-			break;
-			case 'link':
-        if (!isLinkValid) {
-          showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
-        } else {
-          const isImageURLValid = await checkImageValidity(inputElement.value);
-          if (!isImageURLValid) {
-            showInputError(formElement, inputElement, errorElement, 'Введите корректную ссылку на изображение', config);
-          }
-        }
-			break;
-		default:
-			break;
+	export function checkInputValidity(formElement, inputElement, errorElement, config) {
+		// Сброс кастомных сообщений об ошибке
+		inputElement.setCustomValidity("");
+	
+		if (inputElement.validity.patternMismatch) {
+			// Если встроенная валидация не прошла, установим кастомное сообщение об ошибке
+			inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+		}
+	
+		if (!inputElement.validity.valid) {
+			// Если валидация не прошла, покажем ошибку
+			showInputError(formElement, inputElement, errorElement, inputElement.validationMessage, config);
+		} else {
+			// Если валидация прошла успешно, скроем ошибку
+			hideInputError(formElement, inputElement, errorElement, config);
+		}
 	}
-	}
-}
 
 // Функция переключения состояния кнопки
 export function toggleButtonState(formElement, inputList, buttonElement) {

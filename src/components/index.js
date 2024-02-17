@@ -104,12 +104,6 @@ editProfileButton.addEventListener("click", function () {
 // Настройка валидации и состояния кнопки
 enableValidation(validationConfig);
 toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
-
-// Сбрасываем значения полей и ошибок
-// hideInputError(profileForm, namePopupInput, nameError, validationConfig);
-// hideInputError(profileForm, descriptionInput, descriptionError, validationConfig);
-// hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
-// hideInputError(profileForm, linkInput, linkError, validationConfig);
 });
 
 // Добавляем слушатель событий на .profile__image
@@ -155,6 +149,7 @@ function updateProfileInfo(userInfo) {
   userAbout.textContent = userInfo.about;
   userAvatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
 }
+
 
 // Обработчик события submit формы
 editForm.addEventListener("submit", (evt) => {

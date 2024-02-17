@@ -9,27 +9,14 @@
 import { getUserProfile } from './api.js';
 import { resetFormInputs, resetErrorMessages } from './index.js';
 
-export function openModal(modal, editForm) {
+export function openModal(modal) {
   modal.classList.add("popup_is-opened");
-
-	  // Загрузка информации о пользователе при открытии профильной формы
-		if (modal.classList.contains('popup_type_edit')&& editForm) {
-			getUserProfile()
-				.then(userInfo => {
-					fillProfileForm(editForm, userInfo);
-				})
-				.catch(error => {
-					console.error('Error loading user profile:', error);
-				});
-		}
   document.addEventListener("keydown", handleModalEscPress);
 }
 
 export function closeModal(modal) {
   if (modal) {
     modal.classList.remove("popup_is-opened");
-    resetFormInputs();
-    resetErrorMessages();
     document.removeEventListener("keydown", handleModalEscPress);
   }
 }
