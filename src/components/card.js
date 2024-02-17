@@ -2,7 +2,8 @@
 // работы с карточками: функция создания
 // карточки, функции-обработчики событий
 // удаления и лайка карточки;
-import { handleLike, addCard, deleteCard } from './api';
+import { handleLike, addCard, deleteCard } from './api.js';
+import { currentUserId } from './index.js';
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -69,8 +70,6 @@ if (cardElement.parentElement) {
 }
 	}
 
-	// Получаем информацию о текущем пользователе
-	export const currentUserId = "c5e7b998f871f8fa8c4bb293";
 	// Функция проверки, является ли пользователь владельцем карточки
 	export function isOwner(cardId) {
 	  // Находим карточку по идентификатору
@@ -100,16 +99,6 @@ const card = findCardById(cardId);
 		console.error('Error deleting card:', error);
 	});
 	}
-
-// Обработчик события для кнопки удаления
-function handleDeleteCard(event) {
-  const cardElement = event.target.closest(card);
-  const cardId = cardElement.dataset.cardId;
-
-  // Вызываем функцию удаления карточки
-  deleteCardCallback(cardId, cardElement);
-}
-
 
 export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 

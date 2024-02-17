@@ -16,8 +16,7 @@ import {
 	createCard, 
 	cardDelete, 
 	handleCardLikeCallback, 
-	deleteCardCallback, 
-	currentUserId, 
+	deleteCardCallback,  
 	isOwner 
 } from "./card.js";
 import {
@@ -320,9 +319,12 @@ const userNameElement = document.querySelector('.profile__title');
 const userAboutElement = document.querySelector('.profile__description');
 const userAvatarElement = document.querySelector('.profile__image');
 
+// Сохраняем id после первоначального запроса данных пользователя
+export let currentUserId = "";
 const loadData = () => {
   Promise.all([getUserProfile(), getCards()])
     .then(([userInfo, cards]) => {
+			currentUserId = userInfo._id; // Сохраняем id пользователя
 			updateProfileInfo(userInfo); // Обновляем информацию о пользователе после получения
       // Обрабатываем полученные карточки здесь
 			addCards(
@@ -359,8 +361,8 @@ getCards()
 
 // Использование запроса на получение информации о пользователе
 getUserProfile()
-  .then(userInfo => {
-    console.log(userInfo);
+  .then(user => {
+    console.log(user._id);
   })
   .catch(error => {
     console.error('Error:', error);

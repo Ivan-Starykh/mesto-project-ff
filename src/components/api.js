@@ -1,7 +1,6 @@
 const cohortId = "wff-cohort-6";
 const token = "abc1f6c4-1bf9-4e36-8508-5e54153145a1";
 const apiUrl = `https://nomoreparties.co/v1/${cohortId}`;
-let currentUserId = "";
 
 const checkResponse = (response) => {
   if (!response.ok) {
@@ -16,7 +15,7 @@ const getCards = () => {
       authorization: token,
     },
   })
-	.then(checkResponse)
+    .then(checkResponse)
     .then((data) => {
       if (!data || !Array.isArray(data)) {
         throw new Error("Invalid cards data received from the server.");
@@ -31,10 +30,8 @@ export function getUserProfile() {
     headers: {
       authorization: token,
     },
-  })
-	.then(checkResponse)
-  };
-
+  }).then(checkResponse);
+}
 
 const updateUserInfoApi = (name, about) => {
   return fetch(`${apiUrl}/users/me`, {
@@ -47,8 +44,7 @@ const updateUserInfoApi = (name, about) => {
       name: name,
       about: about,
     }),
-  })
-	.then(checkResponse)
+  }).then(checkResponse);
 };
 
 const addCard = (name, link) => {
@@ -62,8 +58,7 @@ const addCard = (name, link) => {
       name: name,
       link: link,
     }),
-  })
-	.then(checkResponse)
+  }).then(checkResponse);
 };
 
 const handleLike = (cardId, isLiked) => {
@@ -73,8 +68,7 @@ const handleLike = (cardId, isLiked) => {
     headers: {
       authorization: token,
     },
-  })
-	.then(checkResponse)
+  }).then(checkResponse);
 };
 
 async function checkImageValidity(url) {
@@ -105,10 +99,10 @@ const updateAvatar = (avatar) => {
     },
     body: JSON.stringify(avatarData),
   })
-	.then(checkResponse)
+    .then(checkResponse)
     .then((data) => {
       console.log("Avatar update response data:", data);
-    })
+    });
 };
 
 // Функция удаления карточки
@@ -121,8 +115,7 @@ function deleteCard(cardId) {
     headers: {
       authorization: token,
     },
-  })
-			.then(checkResponse)
+  }).then(checkResponse);
 }
 
 // Другие запросы по аналогии
