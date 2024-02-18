@@ -5,10 +5,6 @@
 // события нажатия Esc и функция-обработчик
 //  события клика по оверлею;
 // Функция для открытия модального окна
-
-import { getUserProfile } from './api.js';
-import { resetFormInputs, resetErrorMessages } from './index.js';
-
 export function openModal(modal) {
   modal.classList.add("popup_is-opened");
   document.addEventListener("keydown", handleModalEscPress);

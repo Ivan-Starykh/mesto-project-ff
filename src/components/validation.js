@@ -57,6 +57,7 @@ export function clearValidation(formElement, config) {
   formElement.reset();// Очищаем всю форму
   };
 
+
 	// Функция проверки валидности поля
 	export function checkInputValidity(formElement, inputElement, errorElement, config) {
 		// Сброс кастомных сообщений об ошибке

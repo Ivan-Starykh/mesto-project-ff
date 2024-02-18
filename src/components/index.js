@@ -268,12 +268,6 @@ addCardForm.addEventListener("submit", function (evt) {
     });
 });
 
-const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-  const buttonElement = formElement.querySelector('.popup__button');
-  toggleButtonState(formElement, inputList, buttonElement);
-	// Обработчик для кнопки "Сохранить" в модальном окне
-	buttonElement.addEventListener("click", () => closeModal(modal));
-
   // Первоначальная очистка при открытии формы
   clearValidation(profileForm, validationConfig);
 enableValidation(validationConfig);
