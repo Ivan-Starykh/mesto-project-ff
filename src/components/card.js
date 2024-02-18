@@ -24,21 +24,16 @@ export function createCard(
   cardImage.src = card.link;
   cardImage.setAttribute("alt", card.name);
 
-// Сохраняем _id карточки в data-атрибуте
 cardElement.dataset.cardId = card._id;
 const cardId = card._id;
 
   const deleteButton = cardElement.querySelector(".card__delete-button");
-	if (deleteButton) {
 	if (isOwner) {
     deleteButton.style.display = "block";
 		deleteButton.addEventListener("click", () => deleteCardCallback(cardId, cardElement));
   } else {
     deleteButton.style.display = "none";
   }
-} else {
-	console.error("Delete button not found for the card");
-}
 
   const likeButton = cardElement.querySelector(".card__like-button");
 

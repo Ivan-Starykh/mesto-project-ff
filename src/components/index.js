@@ -202,6 +202,8 @@ const modalTriggerElement = document.getElementById('modalTriggerAddButton');
 modalTriggerElement.addEventListener('click', function() {
   const formElement = document.getElementById('popupAddFormId');
   clearValidation(formElement, validationConfig);
+	enableValidation(validationConfig);
+toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
 });
 
 // Обработчик события submit формы добавления карточки
@@ -273,23 +275,23 @@ const loadData = () => {
 // Загрузка информации о пользователе и начальных карточек при загрузке страницы
 loadData();
 
-// Использование запроса на получение карточек
-getCards()
-  .then(cards => {
-    console.log(cards);
-})
-  .catch(error => {
-    console.error('Error:', error);
-  });
+// // Использование запроса на получение карточек
+// getCards()
+//   .then(cards => {
+//     console.log(cards);
+// })
+//   .catch(error => {
+//     console.error('Error:', error);
+//   });
 
-// Использование запроса на получение информации о пользователе
-getUserProfile()
-  .then(user => {
-    console.log(user._id);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+// // Использование запроса на получение информации о пользователе
+// getUserProfile()
+//   .then(user => {
+//     console.log(user._id);
+//   })
+//   .catch(error => {
+//     console.error('Error:', error);
+//   });
 
 updateAvatarButton.addEventListener('click', () => {
   const newAvatarUrl = avatarLinkInput.value;
