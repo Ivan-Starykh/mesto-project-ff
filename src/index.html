@@ -42,6 +42,7 @@
           <button
             aria-label="add card"
             class="profile__add-button"
+						id="modalTriggerAddButton"
             type="button"
           ></button>
         </section>
@@ -103,7 +104,7 @@
             class="popup__close"
           ></button>
           <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" id="popupFormId" name="newPlace" novalidate>
+          <form class="popup__form" id="popupAddFormId" name="newPlace" novalidate>
             <input
               type="text"
               name="placeName"

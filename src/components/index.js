@@ -189,28 +189,19 @@ closeButtons.forEach((button) => {
 document.addEventListener("keydown", handleModalEscPress);
 document.addEventListener("click", handleModalOverlayClick);
 
-export function resetFormInputs() {
-  const formInputs = document.querySelectorAll('.popup__input');
-  formInputs.forEach(input => {
-    input.value = '';
-  });
-}
-export function resetErrorMessages() {
-  const errorSpans = document.querySelectorAll('.popup__input_type_error');
-  errorSpans.forEach(span => {
-    span.textContent = '';
-		span.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-  });
-}
-
 // добавляем пользовательскую карточку
 const addCardForm = document.forms.newPlace;
 
 // Обработчик события открытия модального окна при нажатии на кнопку "Добавить карточку"
 addButton.addEventListener("click", function () {
 	addCardForm.reset();
-	clearValidation(profileForm, validationConfig);
   openModal(addModal);
+});
+
+const modalTriggerElement = document.getElementById('modalTriggerAddButton'); 
+modalTriggerElement.addEventListener('click', function() {
+  const formElement = document.getElementById('popupAddFormId');
+  clearValidation(formElement, validationConfig);
 });
 
 // Обработчик события submit формы добавления карточки
