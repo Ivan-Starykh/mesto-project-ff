@@ -1,13 +1,3 @@
-// в файле index.js описана инициализация
-// приложения и основная логика страницы:
-// поиск DOM-элементов на странице и навешивание
-// на них обработчиков событий; обработчики
-// отправки форм, функция-обработчик события
-// открытия модального окна для редактирования
-// профиля; функция открытия модального окна изображения
-// карточки. Также в index.js находится код, который
-// отвечает за отображение шести карточек при открытии страницы.
-
 import "../pages/index.css";
 import { 
 	initialCards 
@@ -46,46 +36,32 @@ import {
 	checkImageValidity, 
 	updateAvatar 
 } from './api.js';
+import { 
+	cardContainer,
+	imagePopup,
+	cardImage,
+	imageCaption,
+	editPopup,
+	editForm,
+	nameInput,
+	aboutInput,
+	userProfileCard,
+	userName,
+	userAbout,
+	editProfileButton,
+	profileForm,
+	formElement,
+	editAvatarIcon,
+	avatarPopup,
+	avatarLinkInput,
+	updateAvatarButton,
+	editModal,
+	addModal,
+	editButton,
+	addButton,
+	closeButtons
+} from './constants.js';
 
-const cardContainer = document.querySelector(".places__list");
-const imagePopup = document.querySelector(".popup_type_image");
-const cardImage = imagePopup.querySelector(".popup__image");
-const imageCaption = imagePopup.querySelector(".popup__caption");
-
-// Редактируем профиль
-const editPopup = document.querySelector(".popup_type_edit");
-const editForm = document.forms.editProfile;
-const nameInput = editForm.elements.name;
-const aboutInput = editForm.elements.description;
-const userProfileCard = document.querySelector(".profile__info");
-const userName = userProfileCard.querySelector(".profile__title");
-const userAbout = userProfileCard.querySelector(".profile__description");
-const editProfileButton = userProfileCard.querySelector(
-  ".profile__edit-button"
-);
-const profileForm = document.querySelector('.popup__form');
-const namePopupInput = profileForm.querySelector('.popup__input_type_name');
-const descriptionInput = document.querySelector('.popup__input_type_description');
-const placeNameInput = document.querySelector('.popup__input_type_card-name');
-const linkInput = document.querySelector('.popup__input_type_url');
-const formElement = document.querySelector('.popup__form');
-
-// Редактируем аватарку
-const editAvatarIcon = document.querySelector('.profile__image');
-const avatarPopup = document.querySelector('.popup_type_edit-avatar');
-const avatarLinkInput = document.getElementById('avatarLink');
-const updateAvatarButton = document.getElementById('SaveAvatarButton');
-
-// Получаем элементы модальных окон
-const editModal = document.querySelector(".popup_type_edit");
-const addModal = document.querySelector(".popup_type_new-card");
-
-// Получаем кнопки, которые открывают модальные окна
-const editButton = document.querySelector(".profile__edit-button");
-const addButton = document.querySelector(".profile__add-button");
-
-// Получаем элементы для закрытия модальных окон
-const closeButtons = document.querySelectorAll(".popup__close");
 
 editProfileButton.addEventListener("click", function () {
   // Заполняем поля модальной формы
@@ -232,6 +208,8 @@ const addCardForm = document.forms.newPlace;
 
 // Обработчик события открытия модального окна при нажатии на кнопку "Добавить карточку"
 addButton.addEventListener("click", function () {
+	addCardForm.reset();
+	clearValidation(profileForm, validationConfig);
   openModal(addModal);
 });
 
@@ -266,46 +244,6 @@ addCardForm.addEventListener("submit", function (evt) {
     .catch(error => {
       console.error('Error adding card:', error);
     });
-});
-
-  // Первоначальная очистка при открытии формы
-  clearValidation(profileForm, validationConfig);
-enableValidation(validationConfig);
-// Настройка валидации и состояния кнопки
-enableValidation(validationConfig);
-toggleButtonState(profileForm, Array.from(profileForm.querySelectorAll('.popup__input')), profileForm.querySelector('.popup__button'), validationConfig);
-
-// Сбрасываем значения полей и ошибок
-hideInputError(profileForm, placeNameInput, placeNameError, validationConfig);
-  // Добавляем событие только после полной загрузки DOM
-  placeNameInput.addEventListener('input', function () {
-    checkInputValidity(profileForm, placeNameInput, placeNameError, validationConfig);
-  });
-
-const nameError = profileForm.querySelector('#name-input-error');
-const descriptionError = profileForm.querySelector('#about-input-error');
-const placeNameError = profileForm.querySelector('#place-input-error');
-const linkError = profileForm.querySelector('#link-input-error');
-
-profileForm.addEventListener('submit', function (evt) {
-  evt.preventDefault();
-});
-
-// Добавим события для инпутов
-namePopupInput.addEventListener('input', function () {
-  checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
-});
-
-descriptionInput.addEventListener('input', function () {
-  checkInputValidity(profileForm, descriptionInput, descriptionError, validationConfig);
-});
-
-placeNameInput.addEventListener('input', function () {
-  checkInputValidity(profileForm, placeNameInput, placeNameError, validationConfig);
-});
-
-linkInput.addEventListener('input', function () {
-  checkInputValidity(profileForm, linkInput, linkError, validationConfig, 'link');
 });
 
 // Загрузка информации о пользователе и начальных карточек и обновление элементов на странице

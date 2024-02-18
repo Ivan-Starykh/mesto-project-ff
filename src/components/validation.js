@@ -1,6 +1,13 @@
 import { 
 	checkImageValidity 
 } from './api.js';
+import { 
+	profileForm,
+	namePopupInput,
+	descriptionInput,
+	placeNameInput,
+	linkInput,
+} from './constants.js';
 
 // Настройки валидации
 export const validationConfig = {
@@ -126,3 +133,28 @@ export function hasInvalidInput(inputList) {
   return inputList.some((inputElement) => !inputElement.validity.valid);
 }
 
+const nameError = profileForm.querySelector('#name-input-error');
+const descriptionError = profileForm.querySelector('#about-input-error');
+const placeNameError = profileForm.querySelector('#place-input-error');
+const linkError = profileForm.querySelector('#link-input-error');
+
+profileForm.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+});
+
+// Добавим события для инпутов
+namePopupInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
+});
+
+descriptionInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, descriptionInput, descriptionError, validationConfig);
+});
+
+placeNameInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, placeNameInput, placeNameError, validationConfig);
+});
+
+linkInput.addEventListener('input', function () {
+  checkInputValidity(profileForm, linkInput, linkError, validationConfig, 'link');
+});
