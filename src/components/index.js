@@ -1,7 +1,6 @@
 import "../pages/index.css";
 import {
   createCard,
-  cardDelete,
   handleCardLikeCallback,
   deleteCardCallback,
 } from "./card.js";
@@ -58,21 +57,14 @@ import {
   closeButtons,
 } from "./constants.js";
 
+enableValidation(validationConfig);
+
 editProfileButton.addEventListener("click", function () {
-  // Заполняем поля модальной формы
   nameInput.value = userName.textContent;
   aboutInput.value = userAbout.textContent;
-
-  // Открываем модальное окно
   openModal(editPopup, editForm);
-
-  // Передаем форму в функцию fillProfileForm
   fillProfileForm(editForm);
-
-  // Первоначальная очистка при открытии формы
   clearValidation(profileForm, validationConfig);
-  // Настройка валидации и состояния кнопки
-  enableValidation(validationConfig);
   toggleButtonState(
     profileForm,
     Array.from(profileForm.querySelectorAll(".popup__input")),
@@ -148,7 +140,7 @@ const loadData = () => {
 
       // Обрабатываем полученные карточки здесь
       (
-        cardDelete,
+        deleteCardCallback,
         openImagePopupCallback,
         handleCardLikeCallback,
         currentUserId
@@ -214,14 +206,14 @@ addButton.addEventListener("click", function () {
 });
 
 const modalTriggerElement = document.getElementById("modalTriggerAddButton");
+const addNewPlaceFormElement = document.getElementById("popupAddFormId");
+
 modalTriggerElement.addEventListener("click", function () {
-  const formElement = document.getElementById("popupAddFormId");
-  clearValidation(formElement, validationConfig);
-  enableValidation(validationConfig);
+  clearValidation(addNewPlaceFormElement, validationConfig);
   toggleButtonState(
-    profileForm,
-    Array.from(profileForm.querySelectorAll(".popup__input")),
-    profileForm.querySelector(".popup__button"),
+    addNewPlaceFormElement,
+    Array.from(addNewPlaceFormElement.querySelectorAll(".popup__input")),
+    addNewPlaceFormElement.querySelector(".popup__button"),
     validationConfig
   );
 });
