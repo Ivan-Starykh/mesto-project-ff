@@ -3,7 +3,7 @@
 // карточки, функции-обработчики событий
 // удаления и лайка карточки;
 import { handleLike, addCard, deleteCard } from './api.js';
-import { currentUserId } from './index.js';
+import { getCurrentUserId } from './index.js';
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -14,6 +14,7 @@ export function createCard(
   handleCardLikeCallback,
 	isOwner
 ) {
+
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -27,13 +28,16 @@ export function createCard(
 cardElement.dataset.cardId = card._id;
 const cardId = card._id;
 
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-	if (isOwner) {
-    deleteButton.style.display = "block";
-		deleteButton.addEventListener("click", () => deleteCardCallback(cardId, cardElement));
-  } else {
-    deleteButton.style.display = "none";
-  }
+const deleteButton = cardElement.querySelector(".card__delete-button");
+if (getCurrentUserId().trim() === card.owner._id.trim()) {
+  // Если текущий пользователь владелец карточки
+  deleteButton.style.display = "block";
+  deleteButton.addEventListener("click", function () {
+    deleteCardCallback(cardId, cardElement);
+  });
+} else {
+  deleteButton.style.display = "none";
+}
 
   const likeButton = cardElement.querySelector(".card__like-button");
 
@@ -69,7 +73,7 @@ if (cardElement.parentElement) {
 	export function isOwner(cardId) {
 	  // Находим карточку по идентификатору
 const card = findCardById(cardId);
-	return card && card.owner._id === currentUserId;
+	return card && card.owner._id === getCurrentUserId();
 	}
 	
 	// Определение функции findCardById

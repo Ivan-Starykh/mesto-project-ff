@@ -6,8 +6,7 @@ import {
 	createCard, 
 	cardDelete, 
 	handleCardLikeCallback, 
-	deleteCardCallback,  
-	isOwner 
+	deleteCardCallback
 } from "./card.js";
 import {
   openModal,
@@ -136,10 +135,59 @@ editForm.addEventListener("submit", (evt) => {
 setModalClickListener(editModal, handleModalOverlayClick);
 setModalClickListener(addModal, handleModalOverlayClick);
 
+
+// Сохраняем id после первоначального запроса данных пользователя
+const loadData = () => {
+  Promise.all([getUserProfile(), getCards()])
+    .then(([userInfo, cards]) => {
+			setCurrentUserId(userInfo._id); // Сохраняем id пользователя
+			updateProfileInfo(userInfo); // Обновляем информацию о пользователе после получения
+      
+			      // Получаем значение currentUserId из card.js
+						const currentUserId = getCurrentUserId();
+						console.log("Current User ID in loadData:", currentUserId);
+
+			// Обрабатываем полученные карточки здесь
+			addCards(
+        cardDelete,
+        openImagePopupCallback,
+        handleCardLikeCallback,
+				currentUserId
+      );
+			cards.forEach(card => {
+        // Проверяем, является ли текущий пользователь владельцем карточки
+        const isOwner = card.owner._id === currentUserId;
+				// Создаем карточку, передавая флаг isOwner
+        const cardElement = createCard(card, deleteCardCallback, openImagePopupCallback, handleCardLikeCallback, isOwner, currentUserId);
+
+        // Добавляем карточку в DOM
+        cardContainer.append(cardElement);
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+};
+
+// Загрузка информации о пользователе и начальных карточек при загрузке страницы
+loadData();
+
+
+let currentUserId = "";
+
+export function setCurrentUserId(userId) {
+  currentUserId = userId;
+}
+
+export function getCurrentUserId() {
+  return currentUserId;
+}
+
 function addCards(
   deleteCardCallback,
   openImagePopupCallback,
-  handleCardLikeCallback
+  handleCardLikeCallback,
+	currentUserId
 ) {
   getCards()
     .then(cards => {
@@ -149,7 +197,13 @@ function addCards(
       }
 
 			const cardContainer = document.querySelector(".places__list");
-
+			// Promise.all([getUserProfile(), getCards()])
+			// .then(([userInfo, cards]) => {
+			// 	setCurrentUserId(userInfo._id); // Установите значение currentUserId при получении данных пользователя
+			// updateProfileInfo(userInfo);
+			const currentUserId = getCurrentUserId();
+			console.log("Current User ID in addCards:", currentUserId);
+			
 	// Проверяем, есть ли уже карточки в контейнере
 	if (cardContainer.children.length === 0) {
 		for (let card of cards) {
@@ -160,7 +214,8 @@ function addCards(
 				deleteCardCallback,
 				openImagePopupCallback,
 				handleCardLikeCallback,
-				isOwner
+				isOwner,
+				currentUserId
 			);
 			console.log("Created card element:", cardElement);
 				// Добавляем новую карточку в начало контейнера
@@ -244,36 +299,7 @@ const userNameElement = document.querySelector('.profile__title');
 const userAboutElement = document.querySelector('.profile__description');
 const userAvatarElement = document.querySelector('.profile__image');
 
-// Сохраняем id после первоначального запроса данных пользователя
-export let currentUserId = "";
-const loadData = () => {
-  Promise.all([getUserProfile(), getCards()])
-    .then(([userInfo, cards]) => {
-			currentUserId = userInfo._id; // Сохраняем id пользователя
-			updateProfileInfo(userInfo); // Обновляем информацию о пользователе после получения
-      // Обрабатываем полученные карточки здесь
-			addCards(
-        cardDelete,
-        openImagePopupCallback,
-        handleCardLikeCallback
-      );
-			cards.forEach(card => {
-        // Проверяем, является ли текущий пользователь владельцем карточки
-        const isOwner = card.owner._id === userInfo._id;
-				// Создаем карточку, передавая флаг isOwner
-        const cardElement = createCard(card, deleteCardCallback, openImagePopupCallback, handleCardLikeCallback, isOwner);
 
-        // Добавляем карточку в DOM
-        cardContainer.append(cardElement);
-      });
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-};
-
-// Загрузка информации о пользователе и начальных карточек при загрузке страницы
-loadData();
 
 // // Использование запроса на получение карточек
 // getCards()
