@@ -33,20 +33,7 @@ export function createCard(
   } else {
     deleteButton.style.display = "none";
   }
-
   const likeButton = cardElement.querySelector(".card__like-button");
-
-  // Проверяем, есть ли лайк текущего пользователя в массиве лайков
-  const isLikedByCurrentUser =
-    card.likes.find((like) => like._id === getCurrentUserId()) !== undefined;
-
-  // Устанавливаем соответствующий класс в зависимости от результата проверки
-  if (isLikedByCurrentUser) {
-    likeButton.classList.add("card__like-button_is-active");
-  } else {
-    likeButton.classList.remove("card__like-button_is-active");
-  }
-
   likeButton.addEventListener("click", () => {
     const isLiked = likeButton.classList.contains(
       "card__like-button_is-active"
@@ -54,12 +41,19 @@ export function createCard(
     handleCardLikeCallback(card, card._id, likeButton, isLiked);
   });
 
-  // Код для отображения количества лайков
   const likeCounter = cardElement.querySelector(".card__like-counter");
   if (likeCounter && card.likes) {
-    likeCounter.textContent = card.likes.length; // Устанавливаем количество лайков
+    likeCounter.textContent = card.likes.length;
   } else {
     console.error("Like counter or likes not found for the card");
+  }
+
+  // Проверяем, есть ли лайк от текущего пользователя
+  const currentUserLiked = card.likes.find(
+    (like) => like._id === getCurrentUserId()
+  );
+  if (currentUserLiked) {
+    likeButton.classList.add("card__like-button_is-active");
   }
 
   cardImage.addEventListener("click", () =>
