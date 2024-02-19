@@ -1,5 +1,4 @@
 import "../pages/index.css";
-import { initialCards } from "./cards.js";
 import {
   createCard,
   cardDelete,
@@ -148,7 +147,7 @@ const loadData = () => {
       console.log("Current User ID in loadData:", currentUserId);
 
       // Обрабатываем полученные карточки здесь
-      addCards(
+      (
         cardDelete,
         openImagePopupCallback,
         handleCardLikeCallback,
@@ -187,47 +186,6 @@ export function setCurrentUserId(userId) {
 
 export function getCurrentUserId() {
   return currentUserId;
-}
-
-function addCards(
-  deleteCardCallback,
-  openImagePopupCallback,
-  handleCardLikeCallback,
-  currentUserId
-) {
-  getCards()
-    .then((cards) => {
-      if (!cards || !Array.isArray(cards)) {
-        console.error("Error: Invalid cards data received from the server.");
-        return;
-      }
-
-      const cardContainer = document.querySelector(".places__list");
-      const currentUserId = getCurrentUserId();
-      console.log("Current User ID in addCards:", currentUserId);
-
-      // Проверяем, есть ли уже карточки в контейнере
-      if (cardContainer.children.length === 0) {
-        for (let card of cards) {
-          // Проверяем, является ли текущий пользователь владельцем карточки
-          const isOwner = card.owner._id === currentUserId;
-          const cardElement = createCard(
-            card,
-            deleteCardCallback,
-            openImagePopupCallback,
-            handleCardLikeCallback,
-            isOwner,
-            currentUserId
-          );
-          console.log("Created card element:", cardElement);
-          // Добавляем новую карточку в начало контейнера
-          cardContainer.prepend(cardElement);
-        }
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching cards:", error);
-    });
 }
 
 function openImagePopupCallback(imageUrl, imageName) {
@@ -282,7 +240,7 @@ addCardForm.addEventListener("submit", function (evt) {
       // Создаем новую карточку на основе данных, полученных с сервера
       const cardElement = createCard(
         newCard,
-        cardDelete,
+        deleteCardCallback,
         openImagePopupCallback,
         handleCardLikeCallback
       );

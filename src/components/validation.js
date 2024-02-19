@@ -177,35 +177,35 @@ profileForm.addEventListener("submit", function (evt) {
   evt.preventDefault();
 });
 
-// Добавим события для инпутов
-namePopupInput.addEventListener("input", function () {
-  checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
-});
+// // Добавим события для инпутов
+// namePopupInput.addEventListener("input", function () {
+//   checkInputValidity(profileForm, namePopupInput, nameError, validationConfig);
+// });
 
-descriptionInput.addEventListener("input", function () {
-  checkInputValidity(
-    profileForm,
-    descriptionInput,
-    descriptionError,
-    validationConfig
-  );
-});
+// descriptionInput.addEventListener("input", function () {
+//   checkInputValidity(
+//     profileForm,
+//     descriptionInput,
+//     descriptionError,
+//     validationConfig
+//   );
+// });
 
-placeNameInput.addEventListener("input", function () {
-  checkInputValidity(
-    profileForm,
-    placeNameInput,
-    placeNameError,
-    validationConfig
-  );
-});
+// placeNameInput.addEventListener("input", function () {
+//   checkInputValidity(
+//     profileForm,
+//     placeNameInput,
+//     placeNameError,
+//     validationConfig
+//   );
+// });
 
-linkInput.addEventListener("input", function () {
-  checkInputValidity(
-    profileForm,
-    linkInput,
-    linkError,
-    validationConfig,
-    "link"
-  );
-});
+// linkInput.addEventListener("input", function () {
+//   checkInputValidity(
+//     profileForm,
+//     linkInput,
+//     linkError,
+//     validationConfig,
+//     "link"
+//   );
+// });
