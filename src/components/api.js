@@ -118,8 +118,6 @@ function deleteCard(cardId) {
   }).then(checkResponse);
 }
 
-// Другие запросы по аналогии
-
 export {
   getCards,
   updateUserInfoApi,

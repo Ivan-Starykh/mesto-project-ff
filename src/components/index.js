@@ -139,12 +139,10 @@ const loadData = () => {
       console.log("Current User ID in loadData:", currentUserId);
 
       // Обрабатываем полученные карточки здесь
-      (
-        deleteCardCallback,
+      deleteCardCallback,
         openImagePopupCallback,
         handleCardLikeCallback,
-        currentUserId
-      );
+        currentUserId;
       cards.forEach((card) => {
         // Проверяем, является ли текущий пользователь владельцем карточки
         const isOwner = card.owner._id === currentUserId;

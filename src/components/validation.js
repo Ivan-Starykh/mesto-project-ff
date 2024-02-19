@@ -1,11 +1,5 @@
 import { checkImageValidity } from "./api.js";
-import {
-  profileForm,
-  namePopupInput,
-  descriptionInput,
-  placeNameInput,
-  linkInput,
-} from "./constants.js";
+import { profileForm } from "./constants.js";
 
 // Настройки валидации
 export const validationConfig = {
@@ -49,7 +43,7 @@ export function clearValidation(formElement, config) {
     const errorElement = inputElement.nextElementSibling;
     hideInputError(formElement, inputElement, errorElement, config);
 
-		if (inputElement) {
+    if (inputElement) {
       inputElement.classList.remove(config.inputErrorClass);
       if (inputElement.name !== "link" && inputElement.name !== "placeName") {
         inputElement.value = "";

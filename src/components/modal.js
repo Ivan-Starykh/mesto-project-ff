@@ -1,11 +1,3 @@
-// в файле modal.js описаны функции для
-// работы с модальными окнами: функция
-// открытия модального окна, функция
-// закрытия модального окна, функция-обработчик
-// события нажатия Esc и функция-обработчик
-//  события клика по оверлею;
-// Функция для открытия модального окна
-
 export function openModal(modal) {
   modal.classList.add("popup_is-opened");
   document.addEventListener("keydown", handleModalEscPress);
@@ -51,6 +43,4 @@ export function fillProfileForm(editForm, userInfo) {
   if (userInfo && userInfo.about) {
     aboutInput.value = userInfo.about;
   }
-
-  // Другие поля формы, если они есть
 }
