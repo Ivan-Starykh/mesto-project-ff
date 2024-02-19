@@ -21,16 +21,17 @@ export function closeModal(modal) {
 export function handleModalOverlayClick(event) {
   if (event.target === event.currentTarget) {
     const modal = event.target.closest(".popup");
-		if (openModal) {
-			closeModal(modal);
+    if (openModal) {
+      closeModal(modal);
+    }
   }
-}}
+}
 
 export function handleModalEscPress(event) {
   if (event.key === "Escape") {
     const openModal = document.querySelector(".popup_is-opened");
     if (openModal) {
-			closeModal(openModal);
+      closeModal(openModal);
     }
   }
 }
@@ -43,7 +44,7 @@ export function setModalClickListener(modal, handleModalOverlayClick) {
 export function fillProfileForm(editForm, userInfo) {
   const nameInput = editForm.elements.name;
   const aboutInput = editForm.elements.description;
-	if (userInfo && userInfo.name) {
+  if (userInfo && userInfo.name) {
     nameInput.value = userInfo.name;
   }
 

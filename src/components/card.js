@@ -2,8 +2,8 @@
 // работы с карточками: функция создания
 // карточки, функции-обработчики событий
 // удаления и лайка карточки;
-import { handleLike, addCard, deleteCard } from './api.js';
-import { getCurrentUserId } from './index.js';
+import { handleLike, addCard, deleteCard } from "./api.js";
+import { getCurrentUserId } from "./index.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -12,9 +12,8 @@ export function createCard(
   deleteCardCallback,
   openImagePopupCallback,
   handleCardLikeCallback,
-	isOwner
+  isOwner
 ) {
-
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
@@ -25,34 +24,36 @@ export function createCard(
   cardImage.src = card.link;
   cardImage.setAttribute("alt", card.name);
 
-cardElement.dataset.cardId = card._id;
-const cardId = card._id;
+  cardElement.dataset.cardId = card._id;
+  const cardId = card._id;
 
-const deleteButton = cardElement.querySelector(".card__delete-button");
-if (getCurrentUserId().trim() === card.owner._id.trim()) {
-  // Если текущий пользователь владелец карточки
-  deleteButton.style.display = "block";
-  deleteButton.addEventListener("click", function () {
-    deleteCardCallback(cardId, cardElement);
-  });
-} else {
-  deleteButton.style.display = "none";
-}
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+  if (getCurrentUserId().trim() === card.owner._id.trim()) {
+    // Если текущий пользователь владелец карточки
+    deleteButton.style.display = "block";
+    deleteButton.addEventListener("click", function () {
+      deleteCardCallback(cardId, cardElement);
+    });
+  } else {
+    deleteButton.style.display = "none";
+  }
 
   const likeButton = cardElement.querySelector(".card__like-button");
 
   likeButton.addEventListener("click", () => {
-		const isLiked = likeButton.classList.contains("card__like-button_is-active");
-  handleCardLikeCallback(card, card._id, likeButton, isLiked);
-	});
+    const isLiked = likeButton.classList.contains(
+      "card__like-button_is-active"
+    );
+    handleCardLikeCallback(card, card._id, likeButton, isLiked);
+  });
 
-	// Код для отображения количества лайков
+  // Код для отображения количества лайков
   const likeCounter = cardElement.querySelector(".card__like-counter");
-	if (likeCounter && card.likes) {
-  likeCounter.textContent = card.likes.length; // Устанавливаем количество лайков
-} else {
-	console.error("Like counter or likes not found for the card");
-}
+  if (likeCounter && card.likes) {
+    likeCounter.textContent = card.likes.length; // Устанавливаем количество лайков
+  } else {
+    console.error("Like counter or likes not found for the card");
+  }
 
   cardImage.addEventListener("click", () =>
     openImagePopupCallback(card.link, card.name)
@@ -62,55 +63,58 @@ if (getCurrentUserId().trim() === card.owner._id.trim()) {
 }
 
 export function cardDelete(cardElement) {
-if (cardElement.parentElement) {
-	cardElement.parentElement.removeChild(cardElement);
-} else {
-	console.error('Parent element not found for the card');
+  if (cardElement.parentElement) {
+    cardElement.parentElement.removeChild(cardElement);
+  } else {
+    console.error("Parent element not found for the card");
+  }
 }
-	}
 
-	// Функция проверки, является ли пользователь владельцем карточки
-	export function isOwner(cardId) {
-	  // Находим карточку по идентификатору
-const card = findCardById(cardId);
-	return card && card.owner._id === getCurrentUserId();
-	}
-	
-	// Определение функции findCardById
-	function findCardById(cardId) {
-	return cards.find((card) => card._id === cardId) || null;
-	}
-	
-	export function deleteCardCallback(cardId, cardElement) {
-	// Вызываем функцию удаления карточки
-	deleteCard(cardId)
-	.then(() => {
-		console.log('Card deleted successfully:', cardId);
-	
-		      // Если удаление прошло успешно, удаляем карточку из DOM
-					if (cardElement) {
-						cardDelete(cardElement);
-					} else {
-						console.error('Card element not found in the DOM');
-					}
-				})
-	.catch(error => {
-		console.error('Error deleting card:', error);
-	});
-	}
+// Функция проверки, является ли пользователь владельцем карточки
+export function isOwner(cardId) {
+  // Находим карточку по идентификатору
+  const card = findCardById(cardId);
+  return card && card.owner._id === getCurrentUserId();
+}
+
+// Определение функции findCardById
+function findCardById(cardId) {
+  return cards.find((card) => card._id === cardId) || null;
+}
+
+export function deleteCardCallback(cardId, cardElement) {
+  // Вызываем функцию удаления карточки
+  deleteCard(cardId)
+    .then(() => {
+      console.log("Card deleted successfully:", cardId);
+
+      // Если удаление прошло успешно, удаляем карточку из DOM
+      if (cardElement) {
+        cardDelete(cardElement);
+      } else {
+        console.error("Card element not found in the DOM");
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting card:", error);
+    });
+}
 
 export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
-
   handleLike(cardId, isLiked)
-    .then(updatedCard => {
+    .then((updatedCard) => {
       card.likes = updatedCard.likes;
 
       // Обновите визуальное представление
       likeButton.classList.toggle("card__like-button_is-active");
 
       // Обновите количество лайков в соответствующем элементе
-      const likeCounter = likeButton.closest(".card").querySelector(".card__like-counter");
-      likeCounter.textContent = isLiked ? parseInt(likeCounter.textContent) - 1 : parseInt(likeCounter.textContent) + 1;
-		})
-    .catch(error => console.error(`Error handling like: ${error.message}`));
+      const likeCounter = likeButton
+        .closest(".card")
+        .querySelector(".card__like-counter");
+      likeCounter.textContent = isLiked
+        ? parseInt(likeCounter.textContent) - 1
+        : parseInt(likeCounter.textContent) + 1;
+    })
+    .catch((error) => console.error(`Error handling like: ${error.message}`));
 }

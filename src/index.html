@@ -42,7 +42,7 @@
           <button
             aria-label="add card"
             class="profile__add-button"
-						id="modalTriggerAddButton"
+            id="modalTriggerAddButton"
             type="button"
           ></button>
         </section>
@@ -68,10 +68,10 @@
               class="popup__input popup__input_type_name"
               placeholder="Имя"
               pattern="^[A-Za-zА-Яа-яЁё\s-]{2,40}$"
-							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-							minlength="2"
-							maxlength="40"
-							required
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              minlength="2"
+              maxlength="40"
+              required
             />
             <span class="popup__input_type_error" id="name-input-error"></span>
             <input
@@ -80,10 +80,10 @@
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
               pattern="^[A-Za-zА-Яа-яЁё\s-]$"
-							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-							minlength="2"
-							maxlength="200"
-							required
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              minlength="2"
+              maxlength="200"
+              required
             />
             <span class="popup__input_type_error" id="about-input-error"></span>
             <button
@@ -104,17 +104,22 @@
             class="popup__close"
           ></button>
           <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" id="popupAddFormId" name="newPlace" novalidate>
+          <form
+            class="popup__form"
+            id="popupAddFormId"
+            name="newPlace"
+            novalidate
+          >
             <input
               type="text"
               name="placeName"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
-							pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*)$"
-							data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-							minlength="2"
-							maxlength="30"
-							required
+              pattern="^([a-zA-Zа-яА-Яё]+([- ]+[a-zA-Zа-яА-Яё]+)*)$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+              minlength="2"
+              maxlength="30"
+              required
             />
             <span class="popup__input_type_error" id="place-input-error"></span>
             <input
@@ -122,16 +127,16 @@
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
-							pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
-							data-error-message="Введите корректную ссылку на изображение"
-							required
+              pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
+              data-error-message="Введите корректную ссылку на изображение"
+              required
             />
             <span class="popup__input_type_error" id="link-input-error"></span>
             <button
               aria-label="save popup"
               type="submit"
               class="button popup__button"
-							id="addNewPlaceSaveButton"
+              id="addNewPlaceSaveButton"
             >
               Сохранить
             </button>
@@ -164,15 +169,15 @@
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
-							pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
-							data-error-message="Введите корректную ссылку на изображение"
-							required
+              pattern="^(https?:\/\/).*\.(jpeg|jpg|png|gif|bmp)$"
+              data-error-message="Введите корректную ссылку на изображение"
+              required
             />
             <span class="popup__input_type_error" id="link-input-error"></span>
             <button
               aria-label="save popup"
               type="submit"
-							id="SaveAvatarButton"
+              id="SaveAvatarButton"
               class="button popup__button"
             >
               Сохранить
