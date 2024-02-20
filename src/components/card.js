@@ -33,6 +33,7 @@ export function createCard(
   } else {
     deleteButton.style.display = "none";
   }
+
   const likeButton = cardElement.querySelector(".card__like-button");
   likeButton.addEventListener("click", () => {
     const isLiked = likeButton.classList.contains(
@@ -48,13 +49,13 @@ export function createCard(
     console.error("Like counter or likes not found for the card");
   }
 
-  // // Проверяем, есть ли лайк от текущего пользователя
-  // const currentUserLiked = card.likes.find(
-  //   (like) => like._id === getCurrentUserId()
-  // );
-  // if (currentUserLiked) {
-  //   likeButton.classList.add("card__like-button_is-active");
-  // }
+  // Проверяем, есть ли лайк от текущего пользователя
+  const currentUserLiked = card.likes.some(
+    (like) => like._id === getCurrentUserId()
+  );
+  if (currentUserLiked) {
+    likeButton.classList.add("card__like-button_is-active");
+  }
 
   cardImage.addEventListener("click", () =>
     openImagePopupCallback(card.link, card.name)
@@ -137,6 +138,8 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
         // Если лайк установлен, добавляем класс, иначе удаляем
         if (isLiked) {
           likeButton.classList.add("card__like-button_is-active");
+					const isLikeButtonActive = likeButton.classList.contains('card__like-button_is-active');
+console.log('Is like button active?', isLikeButtonActive);
         } else {
           likeButton.classList.remove("card__like-button_is-active");
         }
@@ -155,4 +158,3 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
     toggleLike();
   }
 }
-
