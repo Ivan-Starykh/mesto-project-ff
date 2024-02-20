@@ -49,16 +49,10 @@ export function createCard(
   }
 
   // Проверяем, есть ли лайк от текущего пользователя
-  // const currentUserLiked = card.likes.some(
-  //   (like) => like._id === getCurrentUserId()
-  // );
-	const currentUserId = getCurrentUserId();
-const currentUserLiked = card.likes.some((like) => {
-  const isCurrentUser = like._id === currentUserId;
-  console.log(`Current user liked: ${isCurrentUser}`);
-  return isCurrentUser;
-});
-
+  const currentUserLiked = card.likes.find(
+    (like) => like._id === getCurrentUserId()
+  );
+	console.log("Current User Liked:", currentUserLiked);
   if (currentUserLiked) {
     likeButton.classList.add("card__like-button_is-active");
   }
@@ -108,70 +102,39 @@ export function deleteCardCallback(cardId, cardElement) {
     });
 }
 
-// export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
-//   handleLike(cardId, isLiked)
-//     .then((updatedCard) => {
-//       card.likes = updatedCard.likes;
-
-//       // Обновите визуальное представление
-//       likeButton.classList.toggle("card__like-button_is-active");
-
-//       // Обновите количество лайков в соответствующем элементе
-//       const likeCounter = likeButton
-//         .closest(".card")
-//         .querySelector(".card__like-counter");
-//       likeCounter.textContent = isLiked
-//         ? parseInt(likeCounter.textContent) - 1
-//         : parseInt(likeCounter.textContent) + 1;
-//     })
-//     .catch((error) => console.error(`Error handling like: ${error.message}`));
-// }
 export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 	console.log("Handling like callback:", card, cardId, likeButton, isLiked);
 
 	const toggleLike = () => {
-    handleLike(cardId, isLiked)
-      .then((updatedCard) => {
-				console.log("Updated card after handling like:", updatedCard);
-        card.likes = updatedCard.likes;
+			handleLike(cardId, isLiked)
+					.then((updatedCard) => {
+							console.log("Updated card after handling like:", updatedCard);
+							card.likes = updatedCard.likes; // Обновляем массив card.likes
 
-        // Обновите количество лайков в соответствующем элементе
-        const likeCounter = likeButton
-          .closest(".card")
-          .querySelector(".card__like-counter");
+							const likeCounter = likeButton.closest(".card").querySelector(".card__like-counter");
+							if (likeCounter) {
+									likeCounter.textContent = card.likes.length;
+							}
 
-        // likeCounter.textContent = card.likes.length
-        // ? parseInt(likeCounter.textContent) + 1
-        // : parseInt(likeCounter.textContent) - 1;
-        // Обновите счетчик лайков только если данные пришли корректными
-        if (likeCounter) {
-          likeCounter.textContent = card.likes.length;
-        }
+							const currentUserLiked = card.likes.find(
+									(like) => like._id === getCurrentUserId()
+							);
+							console.log("Current User Liked:", currentUserLiked);
 
-        // Если лайк установлен, добавляем класс, иначе удаляем
-        if (isLiked) {
-          likeButton.classList.add("card__like-button_is-active");
-					const isLikeButtonActive = likeButton.classList.contains('card__like-button_is-active');
-console.log('Is like button active?', isLikeButtonActive);
-        } else {
-          likeButton.classList.remove("card__like-button_is-active");
-        }
-      })
-      .catch((error) => console.error(`Error handling like: ${error.message}`));
-  };
+							if (isLiked) {
+									likeButton.classList.toggle("card__like-button_is-active", currentUserLiked !== undefined);
+							} else {
+									likeButton.classList.remove("card__like-button_is-active");
+							}
+					})
+					.catch((error) => console.error(`Error handling like: ${error.message}`));
+	};
 
-  // Проверяем наличие класса и вызываем соответствующую функцию
-  if (likeButton.classList.contains("card__like-button_is-active")) {
-    // Если класс есть, значит лайк установлен, отправляем DELETE запрос
-    isLiked = true;
-    toggleLike();
-    // isLiked = false;
-    // toggleLike();
-  } else {
-    // Если класса нет, значит лайк не установлен, отправляем PUT запрос
-    isLiked = false;
-    toggleLike();
-    // isLiked = true;
-    // toggleLike();
-  }
+	if (likeButton.classList.contains("card__like-button_is-active")) {
+			isLiked = true;
+			toggleLike();
+	} else {
+			isLiked = false;
+			toggleLike();
+	}
 }
