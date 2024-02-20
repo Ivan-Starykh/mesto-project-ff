@@ -48,13 +48,13 @@ export function createCard(
     console.error("Like counter or likes not found for the card");
   }
 
-  // Проверяем, есть ли лайк от текущего пользователя
-  const currentUserLiked = card.likes.find(
-    (like) => like._id === getCurrentUserId()
-  );
-  if (currentUserLiked) {
-    likeButton.classList.add("card__like-button_is-active");
-  }
+  // // Проверяем, есть ли лайк от текущего пользователя
+  // const currentUserLiked = card.likes.find(
+  //   (like) => like._id === getCurrentUserId()
+  // );
+  // if (currentUserLiked) {
+  //   likeButton.classList.add("card__like-button_is-active");
+  // }
 
   cardImage.addEventListener("click", () =>
     openImagePopupCallback(card.link, card.name)
@@ -101,21 +101,58 @@ export function deleteCardCallback(cardId, cardElement) {
     });
 }
 
+// export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
+//   handleLike(cardId, isLiked)
+//     .then((updatedCard) => {
+//       card.likes = updatedCard.likes;
+
+//       // Обновите визуальное представление
+//       likeButton.classList.toggle("card__like-button_is-active");
+
+//       // Обновите количество лайков в соответствующем элементе
+//       const likeCounter = likeButton
+//         .closest(".card")
+//         .querySelector(".card__like-counter");
+//       likeCounter.textContent = isLiked
+//         ? parseInt(likeCounter.textContent) - 1
+//         : parseInt(likeCounter.textContent) + 1;
+//     })
+//     .catch((error) => console.error(`Error handling like: ${error.message}`));
+// }
 export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
-  handleLike(cardId, isLiked)
-    .then((updatedCard) => {
-      card.likes = updatedCard.likes;
+	console.log("Handling like callback:", card, cardId, likeButton, isLiked);
+	const toggleLike = () => {
+    handleLike(cardId, isLiked)
+      .then((updatedCard) => {
+				console.log("Updated card after handling like:", updatedCard);
+        card.likes = updatedCard.likes;
 
-      // Обновите визуальное представление
-      likeButton.classList.toggle("card__like-button_is-active");
-
-      // Обновите количество лайков в соответствующем элементе
-      const likeCounter = likeButton
-        .closest(".card")
-        .querySelector(".card__like-counter");
-      likeCounter.textContent = isLiked
+        // Обновите количество лайков в соответствующем элементе
+        const likeCounter = likeButton
+          .closest(".card")
+          .querySelector(".card__like-counter");
+        likeCounter.textContent = card.likes.length
         ? parseInt(likeCounter.textContent) - 1
         : parseInt(likeCounter.textContent) + 1;
-    })
-    .catch((error) => console.error(`Error handling like: ${error.message}`));
+        // Если лайк установлен, добавляем класс, иначе удаляем
+        if (isLiked) {
+          likeButton.classList.add("card__like-button_is-active");
+        } else {
+          likeButton.classList.remove("card__like-button_is-active");
+        }
+      })
+      .catch((error) => console.error(`Error handling like: ${error.message}`));
+  };
+
+  // Проверяем наличие класса и вызываем соответствующую функцию
+  if (likeButton.classList.contains("card__like-button_is-active")) {
+    // Если класс есть, значит лайк установлен, отправляем DELETE запрос
+    isLiked = false;
+    toggleLike();
+  } else {
+    // Если класса нет, значит лайк не установлен, отправляем PUT запрос
+    isLiked = true;
+    toggleLike();
+  }
 }
+

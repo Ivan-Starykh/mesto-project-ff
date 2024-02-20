@@ -155,7 +155,13 @@ const loadData = () => {
           isOwner,
           currentUserId
         );
-
+				
+// Проверяем, есть ли лайк от текущего пользователя
+const currentUserLiked = card.likes.find((like) => like._id === currentUserId);
+if (currentUserLiked) {
+	const likeButton = cardElement.querySelector(".card__like-button");
+	likeButton.classList.add("card__like-button_is-active");
+}
         // Добавляем карточку в DOM
         cardContainer.append(cardElement);
       });
