@@ -74,6 +74,10 @@ const handleLike = (cardId, isLiked) => {
       // Добавляем логирование обновленных данных карточки
       console.log('Updated card after handling like:', updatedCard);
       return updatedCard;
+    })
+    .catch((error) => {
+      console.error('Error handling like:', error);
+      throw error;
     });
 };
 // const handleLike = (cardId, isLiked) => {
