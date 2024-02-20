@@ -124,17 +124,11 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 							if (isLiked) {
 									likeButton.classList.toggle("card__like-button_is-active", currentUserLiked !== undefined);
 							} else {
-									likeButton.classList.remove("card__like-button_is-active");
+									likeButton.classList.toggle("card__like-button_is-active", true);
 							}
 					})
 					.catch((error) => console.error(`Error handling like: ${error.message}`));
 	};
 
-	if (likeButton.classList.contains("card__like-button_is-active")) {
-			isLiked = true;
-			toggleLike();
-	} else {
-			isLiked = false;
-			toggleLike();
-	}
+	toggleLike();
 }
