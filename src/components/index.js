@@ -156,19 +156,6 @@ const loadData = () => {
           currentUserId
         );
 
-				const likeButton = cardElement.querySelector(".card__like-button");
-
-        // Проверяем, есть ли лайк от текущего пользователя
-        const currentUserLiked = card.likes.find((like) => like._id === currentUserId);
-
-        if (currentUserLiked) {
-          likeButton.classList.add("card__like-button_is-active");
-        }
-
-        // Установим статус лайка в соответствии с текущим пользователем
-        const likeCounter = cardElement.querySelector(".card__like-counter");
-        likeCounter.textContent = card.likes.length;
-				
         // Добавляем карточку в DOM
         cardContainer.append(cardElement);
       });
