@@ -129,6 +129,14 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 					})
 					.catch((error) => console.error(`Error handling like: ${error.message}`));
 	};
-
+// Проверяем наличие класса и вызываем соответствующую функцию
+if (likeButton.classList.contains("card__like-button_is-active")) {
+	// Если класс есть, значит лайк установлен, отправляем DELETE запрос
+	isLiked = true;
 	toggleLike();
+} else {
+	// Если класса нет, значит лайк не установлен, отправляем PUT запрос
+	isLiked = false;
+	toggleLike();
+}
 }
