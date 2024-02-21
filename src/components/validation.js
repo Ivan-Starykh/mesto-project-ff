@@ -46,7 +46,6 @@ export function clearValidation(formElement, config) {
     if (inputElement) {
       inputElement.classList.remove(config.inputErrorClass);
       if (inputElement.name !== "link" && inputElement.name !== "placeName") {
-        inputElement.value = "";
       }
     }
     if (inputElement.name === "link" || inputElement.name === "placeName") {
@@ -64,8 +63,6 @@ export function clearValidation(formElement, config) {
       errorElement.classList.remove(config.errorClass); // удаление класса ошибки
     }
   });
-
-  formElement.reset(); // Очищаем всю форму
 }
 
 // Функция проверки валидности поля
