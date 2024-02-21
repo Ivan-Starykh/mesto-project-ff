@@ -71,24 +71,13 @@ const handleLike = (cardId, isLiked) => {
   })
     .then(checkResponse)
     .then((updatedCard) => {
-      // Добавляем логирование обновленных данных карточки
-      console.log('Updated card after handling like:', updatedCard);
       return updatedCard;
     })
     .catch((error) => {
-      console.error('Error handling like:', error);
+      console.error("Error handling like:", error);
       throw error;
     });
 };
-// const handleLike = (cardId, isLiked) => {
-//   const method = isLiked ? "DELETE" : "PUT";
-//   return fetch(`${apiUrl}/cards/likes/${cardId}`, {
-//     method,
-//     headers: {
-//       authorization: token,
-//     },
-//   }).then(checkResponse);
-// };
 
 async function checkImageValidity(url) {
   if (!url.trim()) {
