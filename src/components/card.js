@@ -34,6 +34,8 @@ export function createCard(
     deleteButton.style.display = "none";
   }
   const likeButton = cardElement.querySelector(".card__like-button");
+	const likeCounter = cardElement.querySelector(".card__like-counter");
+
   likeButton.addEventListener("click", () => {
     const isLiked = likeButton.classList.contains(
       "card__like-button_is-active"
@@ -41,7 +43,6 @@ export function createCard(
     handleCardLikeCallback(card, card._id, likeButton, isLiked);
   });
 
-  const likeCounter = cardElement.querySelector(".card__like-counter");
   if (likeCounter && card.likes) {
     likeCounter.textContent = card.likes.length;
   } else {
@@ -109,6 +110,7 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 			handleLike(cardId, isLiked)
 					.then((updatedCard) => {
 							console.log("Updated card after handling like:", updatedCard);
+
 							card.likes = updatedCard.likes; // Обновляем массив card.likes
 
 							const likeCounter = likeButton.closest(".card").querySelector(".card__like-counter");
@@ -121,22 +123,20 @@ export function handleCardLikeCallback(card, cardId, likeButton, isLiked) {
 							);
 							console.log("Current User Liked:", currentUserLiked);
 
-							if (isLiked) {
-									likeButton.classList.toggle("card__like-button_is-active", currentUserLiked !== undefined);
-							} else {
-									likeButton.classList.toggle("card__like-button_is-active", true);
-							}
-					})
-					.catch((error) => console.error(`Error handling like: ${error.message}`));
-	};
+likeButton.classList.toggle("card__like-button_is-active", !!currentUserLiked);
+      })
+      .catch((error) => console.error(`Error handling like: ${error.message}`));
+  };
+
 // Проверяем наличие класса и вызываем соответствующую функцию
 if (likeButton.classList.contains("card__like-button_is-active")) {
 	// Если класс есть, значит лайк установлен, отправляем DELETE запрос
 	isLiked = true;
-	toggleLike();
 } else {
 	// Если класса нет, значит лайк не установлен, отправляем PUT запрос
 	isLiked = false;
+}
+if (isLiked !== undefined) {
 	toggleLike();
 }
 }
